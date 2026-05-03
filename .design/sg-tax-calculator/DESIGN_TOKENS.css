@@ -1,0 +1,230 @@
+/*
+ * Design Tokens — SG Income Tax Calculator
+ * Philosophy: Scandinavian (warmth + restraint)
+ * Generated from design brief and frontend-design skill parameters.
+ *
+ * Fonts: DM Sans (body, friendly rounded sans), JetBrains Mono (numbers/code).
+ * Base spacing unit: 8px.
+ * Border radius: generous (12-16px on cards, 8px on inputs).
+ * Shadows: soft, large blur, low opacity.
+ * Colors: warm whites, charcoal (no pure black), teal accent carried from v1.
+ */
+
+/* ================================================================
+   LIGHT MODE (default)
+   ================================================================ */
+:root {
+  /* --- Color: Backgrounds --- */
+  --color-bg-primary:           #f8f7f4;      /* Warm off-white, paper-like */
+  --color-bg-secondary:         #ffffff;      /* Cards, elevated surfaces */
+  --color-bg-tertiary:          #f0eee9;      /* Input wells, subtle fills */
+  --color-bg-inverse:           #1c1e21;      /* Tooltips, toasts */
+
+  /* --- Color: Text --- */
+  --color-text-primary:         #1a1a1a;      /* Near-black charcoal, not pure black */
+  --color-text-secondary:       #5c6370;      /* Muted body, descriptions */
+  --color-text-tertiary:        #9ca3af;      /* Placeholders, disabled */
+  --color-text-inverse:         #f0ede8;      /* Text on dark backgrounds */
+  --color-text-link:            #2b8a82;      /* Darker teal for accessible links */
+
+  /* --- Color: Borders --- */
+  --color-border-primary:       #ddd8d0;      /* Warm neutral border */
+  --color-border-secondary:     #e8e4dc;      /* Lighter border for sub-cards */
+  --color-border-focus:         #38b2ac;      /* Teal focus ring */
+
+  /* --- Color: Accent --- */
+  --color-accent-primary:       #38b2ac;      /* Teal — carried from v1 */
+  --color-accent-primary-hover: #2d9f99;
+  --color-accent-primary-active:#268c87;
+  --color-accent-secondary:     #e8f5f3;      /* Teal tint for subtle backgrounds */
+
+  /* --- Color: Status --- */
+  --color-status-success:       #38a169;      /* Green */
+  --color-status-success-bg:    #f0fff4;
+  --color-status-warning:       #d69e2e;      /* Amber */
+  --color-status-warning-bg:    #fefcf0;
+  --color-status-error:         #e53e3e;      /* Red */
+  --color-status-error-bg:      #fff5f5;
+  --color-status-info:          #3182ce;      /* Blue */
+  --color-status-info-bg:       #ebf8ff;
+
+  /* --- Color: Surface --- */
+  --color-surface-overlay:      rgba(0, 0, 0, 0.4);
+
+  /* --- Spacing (8px base) --- */
+  --space-0:   0;
+  --space-1:   2px;       /* 0.25x */
+  --space-2:   4px;       /* 0.5x  */
+  --space-3:   6px;       /* 0.75x */
+  --space-4:   8px;       /* 1x    */
+  --space-5:   12px;      /* 1.5x  */
+  --space-6:   16px;      /* 2x    */
+  --space-7:   24px;      /* 3x    */
+  --space-8:   32px;      /* 4x    */
+  --space-9:   48px;      /* 6x    */
+  --space-10:  64px;      /* 8x    */
+  --space-11:  96px;      /* 12x   */
+  --space-12:  128px;     /* 16x   */
+
+  /* --- Typography --- */
+  --font-family-body:     'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-family-mono:     'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  --font-size-xs:         0.6875rem;   /* 11px */
+  --font-size-sm:         0.8125rem;   /* 13px */
+  --font-size-base:       0.9375rem;   /* 15px */
+  --font-size-md:         1.0625rem;   /* 17px */
+  --font-size-lg:         1.25rem;     /* 20px */
+  --font-size-xl:         1.5rem;      /* 24px */
+  --font-size-2xl:        1.875rem;    /* 30px */
+  --font-size-3xl:        2.25rem;     /* 36px */
+  --font-size-4xl:        3rem;        /* 48px — hero tax number */
+
+  --font-weight-normal:   400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+
+  --line-height-tight:    1.2;
+  --line-height-normal:   1.5;
+  --line-height-relaxed:  1.7;
+
+  --letter-spacing-tight: -0.02em;    /* Headlines */
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide:  0.06em;     /* Labels, all-caps */
+
+  /* --- Layout --- */
+  --max-width-content:    720px;
+  --max-width-wide:       960px;
+  --max-width-page:       1200px;
+
+  --border-radius-sm:     6px;
+  --border-radius-md:     10px;
+  --border-radius-lg:     16px;
+  --border-radius-full:   9999px;
+
+  /* --- Shadows (soft Scandinavian — large blur, low opacity) --- */
+  --shadow-sm:            0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md:            0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg:            0 12px 32px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-focus:         0 0 0 3px rgba(56, 178, 172, 0.3);
+
+  /* --- Motion --- */
+  --duration-instant:     50ms;
+  --duration-fast:        150ms;
+  --duration-normal:      250ms;
+  --duration-slow:        400ms;
+  --duration-slower:      600ms;
+
+  --easing-default:       cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-in:            cubic-bezier(0.4, 0, 1, 1);
+  --easing-out:           cubic-bezier(0, 0, 0.2, 1);
+  --easing-gentle:        cubic-bezier(0.25, 0.1, 0.25, 1);   /* Scandinavian: settling into place */
+}
+
+/* ================================================================
+   DARK MODE — manual toggle via data attribute
+   Warm charcoal backgrounds (Scandinavian: no cold blue-blacks).
+   Off-white text to reduce eye strain.
+   Accent lightened slightly for contrast on dark surfaces.
+   ================================================================ */
+[data-theme="dark"] {
+  /* --- Backgrounds --- */
+  --color-bg-primary:           #1a1c20;
+  --color-bg-secondary:         #232629;
+  --color-bg-tertiary:          #2c2f34;
+  --color-bg-inverse:           #f0ede8;
+
+  /* --- Text --- */
+  --color-text-primary:         #e8e4dc;
+  --color-text-secondary:       #a0a4ab;
+  --color-text-tertiary:        #6b7078;
+  --color-text-inverse:         #1a1a1a;
+  --color-text-link:            #4fd1c5;
+
+  /* --- Borders --- */
+  --color-border-primary:       #3a3d42;
+  --color-border-secondary:     #2e3136;
+  --color-border-focus:         #4fd1c5;
+
+  /* --- Accent (lightened for dark contrast) --- */
+  --color-accent-primary:       #4fd1c5;
+  --color-accent-primary-hover: #5dddd2;
+  --color-accent-primary-active:#38b2ac;
+  --color-accent-secondary:     rgba(79, 209, 197, 0.12);
+
+  /* --- Status (adjusted for dark backgrounds) --- */
+  --color-status-success:       #68d391;
+  --color-status-success-bg:    rgba(104, 211, 145, 0.1);
+  --color-status-warning:       #f6ad55;
+  --color-status-warning-bg:    rgba(246, 173, 85, 0.1);
+  --color-status-error:         #fc8181;
+  --color-status-error-bg:      rgba(252, 129, 129, 0.1);
+  --color-status-info:          #63b3ed;
+  --color-status-info-bg:       rgba(99, 179, 237, 0.1);
+
+  /* --- Surface --- */
+  --color-surface-overlay:      rgba(0, 0, 0, 0.6);
+
+  /* --- Shadows (darker, more transparent for dark mode) --- */
+  --shadow-sm:                  0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-md:                  0 4px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-lg:                  0 12px 32px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+  --shadow-focus:               0 0 0 3px rgba(79, 209, 197, 0.35);
+}
+
+/* ================================================================
+   SYSTEM PREFERENCE — auto dark mode unless user explicitly chose light
+   ================================================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg-primary:           #1a1c20;
+    --color-bg-secondary:         #232629;
+    --color-bg-tertiary:          #2c2f34;
+    --color-bg-inverse:           #f0ede8;
+
+    --color-text-primary:         #e8e4dc;
+    --color-text-secondary:       #a0a4ab;
+    --color-text-tertiary:        #6b7078;
+    --color-text-inverse:         #1a1a1a;
+    --color-text-link:            #4fd1c5;
+
+    --color-border-primary:       #3a3d42;
+    --color-border-secondary:     #2e3136;
+    --color-border-focus:         #4fd1c5;
+
+    --color-accent-primary:       #4fd1c5;
+    --color-accent-primary-hover: #5dddd2;
+    --color-accent-primary-active:#38b2ac;
+    --color-accent-secondary:     rgba(79, 209, 197, 0.12);
+
+    --color-status-success:       #68d391;
+    --color-status-success-bg:    rgba(104, 211, 145, 0.1);
+    --color-status-warning:       #f6ad55;
+    --color-status-warning-bg:    rgba(246, 173, 85, 0.1);
+    --color-status-error:         #fc8181;
+    --color-status-error-bg:      rgba(252, 129, 129, 0.1);
+    --color-status-info:          #63b3ed;
+    --color-status-info-bg:       rgba(99, 179, 237, 0.1);
+
+    --color-surface-overlay:      rgba(0, 0, 0, 0.6);
+
+    --shadow-sm:                  0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+    --shadow-md:                  0 4px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.15);
+    --shadow-lg:                  0 12px 32px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+    --shadow-focus:               0 0 0 3px rgba(79, 209, 197, 0.35);
+  }
+}
+
+/* ================================================================
+   REDUCED MOTION
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant:  0ms;
+    --duration-fast:     0ms;
+    --duration-normal:   0ms;
+    --duration-slow:     0ms;
+    --duration-slower:   0ms;
+  }
+}

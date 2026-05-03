@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SG Income Tax Calculator · YA 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   DESIGN TOKENS — Scandinavian philosophy
+   ================================================================ */
+:root {
+  --color-bg-primary:#f8f7f4;--color-bg-secondary:#ffffff;--color-bg-tertiary:#f0eee9;--color-bg-inverse:#1c1e21;
+  --color-text-primary:#1a1a1a;--color-text-secondary:#5c6370;--color-text-tertiary:#9ca3af;--color-text-inverse:#f0ede8;--color-text-link:#2b8a82;
+  --color-border-primary:#ddd8d0;--color-border-secondary:#e8e4dc;--color-border-focus:#38b2ac;
+  --color-accent-primary:#38b2ac;--color-accent-primary-hover:#2d9f99;--color-accent-primary-active:#268c87;--color-accent-secondary:#e8f5f3;
+  --color-status-success:#38a169;--color-status-success-bg:#f0fff4;--color-status-warning:#d69e2e;--color-status-warning-bg:#fefcf0;--color-status-error:#e53e3e;--color-status-error-bg:#fff5f5;
+  --space-1:2px;--space-2:4px;--space-3:6px;--space-4:8px;--space-5:12px;--space-6:16px;--space-7:24px;--space-8:32px;--space-9:48px;--space-10:64px;
+  --font-body:'DM Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  --fs-xs:0.6875rem;--fs-sm:0.8125rem;--fs-base:0.9375rem;--fs-md:1.0625rem;--fs-lg:1.25rem;--fs-xl:1.5rem;--fs-2xl:1.875rem;--fs-3xl:2.25rem;
+  --fw-normal:400;--fw-medium:500;--fw-semi:600;--fw-bold:700;
+  --lh-tight:1.2;--lh-normal:1.5;--lh-relaxed:1.7;
+  --ls-tight:-0.02em;--ls-normal:0;--ls-wide:0.06em;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-full:9999px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.06),0 2px 4px rgba(0,0,0,.04);--shadow-lg:0 12px 32px rgba(0,0,0,.08),0 4px 8px rgba(0,0,0,.04);--shadow-focus:0 0 0 3px rgba(56,178,172,.3);
+  --dur-fast:150ms;--dur-normal:250ms;--dur-slow:400ms;
+  --ease:cubic-bezier(.25,.1,.25,1);
+  --max-w:720px;
+}
+[data-theme="dark"]{
+  --color-bg-primary:#1a1c20;--color-bg-secondary:#232629;--color-bg-tertiary:#2c2f34;--color-bg-inverse:#f0ede8;
+  --color-text-primary:#e8e4dc;--color-text-secondary:#a0a4ab;--color-text-tertiary:#6b7078;--color-text-inverse:#1a1a1a;--color-text-link:#4fd1c5;
+  --color-border-primary:#3a3d42;--color-border-secondary:#2e3136;--color-border-focus:#4fd1c5;
+  --color-accent-primary:#4fd1c5;--color-accent-primary-hover:#5dddd2;--color-accent-primary-active:#38b2ac;--color-accent-secondary:rgba(79,209,197,.12);
+  --color-status-success:#68d391;--color-status-success-bg:rgba(104,211,145,.1);--color-status-warning:#f6ad55;--color-status-warning-bg:rgba(246,173,85,.1);--color-status-error:#fc8181;--color-status-error-bg:rgba(252,129,129,.1);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.2),0 1px 2px rgba(0,0,0,.15);--shadow-md:0 4px 12px rgba(0,0,0,.2),0 2px 4px rgba(0,0,0,.15);--shadow-lg:0 12px 32px rgba(0,0,0,.3),0 4px 8px rgba(0,0,0,.2);--shadow-focus:0 0 0 3px rgba(79,209,197,.35);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --color-bg-primary:#1a1c20;--color-bg-secondary:#232629;--color-bg-tertiary:#2c2f34;--color-bg-inverse:#f0ede8;
+  --color-text-primary:#e8e4dc;--color-text-secondary:#a0a4ab;--color-text-tertiary:#6b7078;--color-text-inverse:#1a1a1a;--color-text-link:#4fd1c5;
+  --color-border-primary:#3a3d42;--color-border-secondary:#2e3136;--color-border-focus:#4fd1c5;
+  --color-accent-primary:#4fd1c5;--color-accent-primary-hover:#5dddd2;--color-accent-primary-active:#38b2ac;--color-accent-secondary:rgba(79,209,197,.12);
+  --color-status-success:#68d391;--color-status-success-bg:rgba(104,211,145,.1);--color-status-warning:#f6ad55;--color-status-warning-bg:rgba(246,173,85,.1);--color-status-error:#fc8181;--color-status-error-bg:rgba(252,129,129,.1);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.2),0 1px 2px rgba(0,0,0,.15);--shadow-md:0 4px 12px rgba(0,0,0,.2),0 2px 4px rgba(0,0,0,.15);--shadow-lg:0 12px 32px rgba(0,0,0,.3),0 4px 8px rgba(0,0,0,.2);--shadow-focus:0 0 0 3px rgba(79,209,197,.35);
+}}
+@media(prefers-reduced-motion:reduce){:root{--dur-fast:0ms;--dur-normal:0ms;--dur-slow:0ms;}}
+
+/* ================================================================
+   BASE
+   ================================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);font-size:var(--fs-base);line-height:var(--lh-normal);color:var(--color-text-primary);background:var(--color-bg-primary);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background var(--dur-normal) var(--ease),color var(--dur-normal) var(--ease)}
+a{color:var(--color-text-link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.wrap{max-width:var(--max-w);margin:0 auto;padding:var(--space-7) var(--space-6) var(--space-10)}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--space-8);gap:var(--space-6)}
+.header-left h1{font-size:var(--fs-xl);font-weight:var(--fw-bold);letter-spacing:var(--ls-tight);color:var(--color-text-primary);line-height:var(--lh-tight)}
+.header-left h1 span{color:var(--color-accent-primary)}
+.header-sub{font-size:var(--fs-sm);color:var(--color-text-secondary);margin-top:var(--space-3);max-width:44ch}
+.theme-toggle{background:var(--color-bg-tertiary);border:1px solid var(--color-border-primary);border-radius:var(--radius-full);width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:background var(--dur-fast) var(--ease);flex-shrink:0}
+.theme-toggle:hover{background:var(--color-accent-secondary)}
+.theme-toggle:focus-visible{outline:none;box-shadow:var(--shadow-focus)}
+
+/* ================================================================
+   PROGRESS BAR
+   ================================================================ */
+.progress{display:flex;gap:var(--space-2);margin-bottom:var(--space-7);position:sticky;top:0;z-index:50;background:var(--color-bg-primary);padding:var(--space-5) 0;transition:background var(--dur-normal) var(--ease)}
+.prog-step{flex:1;display:flex;align-items:center;gap:var(--space-3);cursor:pointer;padding:var(--space-4) var(--space-5);border-radius:var(--radius-md);border:1px solid var(--color-border-secondary);background:var(--color-bg-secondary);transition:all var(--dur-fast) var(--ease);font-size:var(--fs-sm);color:var(--color-text-tertiary)}
+.prog-step:hover{border-color:var(--color-border-primary)}
+.prog-step .num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:var(--fs-xs);font-weight:var(--fw-semi);background:var(--color-bg-tertiary);border:1px solid var(--color-border-primary);flex-shrink:0;transition:all var(--dur-fast) var(--ease)}
+.prog-step.active{border-color:var(--color-accent-primary);background:var(--color-accent-secondary);color:var(--color-text-primary)}
+.prog-step.active .num{background:var(--color-accent-primary);color:#fff;border-color:var(--color-accent-primary)}
+.prog-step.done{border-color:var(--color-accent-primary);color:var(--color-accent-primary)}
+.prog-step.done .num{background:var(--color-accent-primary);color:#fff;border-color:var(--color-accent-primary)}
+.prog-step .lbl{display:none}
+@media(min-width:580px){.prog-step .lbl{display:inline}}
+
+/* ================================================================
+   CARD
+   ================================================================ */
+.card{background:var(--color-bg-secondary);border:1px solid var(--color-border-secondary);border-radius:var(--radius-lg);padding:var(--space-7);margin-bottom:var(--space-6);box-shadow:var(--shadow-sm);transition:background var(--dur-normal) var(--ease),border-color var(--dur-normal) var(--ease)}
+.card h2{font-size:var(--fs-md);font-weight:var(--fw-bold);margin-bottom:var(--space-6);color:var(--color-text-primary);display:flex;align-items:center;gap:var(--space-4)}
+.card h2::before{content:'';width:4px;height:20px;background:var(--color-accent-primary);border-radius:2px;flex-shrink:0}
+.section-desc{font-size:var(--fs-sm);color:var(--color-text-secondary);margin-bottom:var(--space-6);line-height:var(--lh-relaxed)}
+.section-heading{font-size:var(--fs-sm);font-weight:var(--fw-semi);color:var(--color-text-secondary);margin-bottom:var(--space-5)}
+
+/* ================================================================
+   FORMS
+   ================================================================ */
+.grid-2{display:grid;grid-template-columns:1fr;gap:var(--space-5)}
+@media(min-width:560px){.grid-2{grid-template-columns:1fr 1fr}}
+.field{margin-bottom:var(--space-5)}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:var(--fs-xs);font-weight:var(--fw-semi);text-transform:uppercase;letter-spacing:var(--ls-wide);color:var(--color-text-secondary);margin-bottom:var(--space-3)}
+.field .hint{font-weight:var(--fw-normal);text-transform:none;letter-spacing:var(--ls-normal);font-size:var(--fs-xs);color:var(--color-text-tertiary)}
+input[type="text"],input[type="number"],input[type="date"],select{width:100%;padding:var(--space-5) var(--space-6);border:1px solid var(--color-border-primary);border-radius:var(--radius-md);background:var(--color-bg-tertiary);color:var(--color-text-primary);font-family:var(--font-body);font-size:var(--fs-base);transition:border-color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease);min-height:44px}
+input:focus,select:focus{outline:none;border-color:var(--color-border-focus);box-shadow:var(--shadow-focus)}
+input[type="checkbox"]{width:18px;height:18px;accent-color:var(--color-accent-primary);cursor:pointer;flex-shrink:0}
+.income-field input{font-family:var(--font-mono);font-size:var(--fs-lg);font-weight:var(--fw-semi);padding:var(--space-6) var(--space-7)}
+.chk-row{display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-4);font-size:var(--fs-base);min-height:44px}
+.chk-row label{margin:0;text-transform:none;font-weight:var(--fw-normal);color:var(--color-text-primary);letter-spacing:var(--ls-normal);cursor:pointer}
+
+/* ================================================================
+   SUB-BLOCKS (children, parents)
+   ================================================================ */
+.sub-block{border:1px solid var(--color-border-secondary);border-radius:var(--radius-md);padding:var(--space-6);margin-bottom:var(--space-5);background:var(--color-bg-primary);transition:background var(--dur-normal) var(--ease)}
+.sub-block h3{font-size:var(--fs-sm);font-weight:var(--fw-semi);color:var(--color-accent-primary);margin-bottom:var(--space-5)}
+.btn-add{display:inline-flex;align-items:center;gap:var(--space-3);font-family:var(--font-body);font-size:var(--fs-sm);font-weight:var(--fw-semi);padding:var(--space-4) var(--space-6);border-radius:var(--radius-md);border:1px dashed var(--color-border-primary);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all var(--dur-fast) var(--ease);margin-top:var(--space-3)}
+.btn-add:hover{border-color:var(--color-accent-primary);color:var(--color-accent-primary);background:var(--color-accent-secondary)}
+
+/* ================================================================
+   COLLAPSIBLE
+   ================================================================ */
+.collapsible-trigger{display:flex;align-items:center;gap:var(--space-3);cursor:pointer;font-size:var(--fs-sm);font-weight:var(--fw-semi);color:var(--color-text-secondary);padding:var(--space-4) 0;border:none;background:none;width:100%;text-align:left}
+.collapsible-trigger:hover{color:var(--color-accent-primary)}
+.collapsible-trigger .chevron{transition:transform var(--dur-fast) var(--ease);font-size:12px}
+.collapsible-trigger.open .chevron{transform:rotate(90deg)}
+.collapsible-body{overflow:hidden;max-height:0;transition:max-height var(--dur-slow) var(--ease);opacity:0}
+.collapsible-body.open{max-height:800px;opacity:1;transition:max-height var(--dur-slow) var(--ease),opacity var(--dur-normal) var(--ease)}
+
+/* ================================================================
+   LIVE PREVIEW
+   ================================================================ */
+.live-preview{background:var(--color-accent-secondary);border:1px solid var(--color-border-secondary);border-radius:var(--radius-md);padding:var(--space-5) var(--space-6);margin-top:var(--space-6);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+.live-preview .lp-label{font-size:var(--fs-sm);color:var(--color-text-secondary)}
+.live-preview .lp-value{font-family:var(--font-mono);font-size:var(--fs-lg);font-weight:var(--fw-semi);color:var(--color-accent-primary)}
+
+/* ================================================================
+   RELIEF CAP BAR
+   ================================================================ */
+.cap-bar-wrap{margin-bottom:var(--space-6)}
+.cap-bar-header{display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--color-text-secondary);margin-bottom:var(--space-3)}
+.cap-bar{height:8px;background:var(--color-bg-tertiary);border-radius:var(--radius-full);overflow:hidden}
+.cap-bar-fill{height:100%;border-radius:var(--radius-full);transition:width var(--dur-normal) var(--ease),background var(--dur-normal) var(--ease)}
+.cap-bar-fill.ok{background:var(--color-status-success)}
+.cap-bar-fill.warn{background:var(--color-status-warning)}
+.cap-bar-fill.over{background:var(--color-status-error)}
+
+/* ================================================================
+   AUTO-RELIEF LIST
+   ================================================================ */
+.auto-reliefs{margin-bottom:var(--space-6)}
+.auto-relief-item{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--color-border-secondary);font-size:var(--fs-sm)}
+.auto-relief-item:last-child{border-bottom:none}
+.auto-relief-item .ar-name{color:var(--color-text-secondary);display:flex;align-items:center;gap:var(--space-3)}
+.auto-relief-item .ar-check{color:var(--color-status-success);font-size:14px}
+.auto-relief-item .ar-val{font-family:var(--font-mono);font-weight:var(--fw-medium);color:var(--color-text-primary)}
+
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+.nav-bar{display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-7);gap:var(--space-4);position:sticky;bottom:0;background:var(--color-bg-primary);padding:var(--space-5) 0;z-index:40;transition:background var(--dur-normal) var(--ease)}
+.btn{font-family:var(--font-body);font-size:var(--fs-sm);font-weight:var(--fw-bold);padding:var(--space-5) var(--space-7);border-radius:var(--radius-md);border:none;cursor:pointer;min-height:44px;transition:all var(--dur-fast) var(--ease)}
+.btn:focus-visible{outline:none;box-shadow:var(--shadow-focus)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+.btn-primary{background:var(--color-accent-primary);color:#fff}
+.btn-primary:hover{background:var(--color-accent-primary-hover)}
+.btn-ghost{background:transparent;color:var(--color-text-secondary);border:1px solid var(--color-border-primary)}
+.btn-ghost:hover{border-color:var(--color-accent-primary);color:var(--color-accent-primary)}
+.btn-copy{display:inline-flex;align-items:center;gap:var(--space-3);background:var(--color-bg-tertiary);border:1px solid var(--color-border-primary);color:var(--color-text-primary);font-family:var(--font-body);font-size:var(--fs-sm);font-weight:var(--fw-semi);padding:var(--space-5) var(--space-7);border-radius:var(--radius-md);cursor:pointer;min-height:44px;transition:all var(--dur-fast) var(--ease);width:100%;justify-content:center;margin-top:var(--space-6)}
+.btn-copy:hover{border-color:var(--color-accent-primary);color:var(--color-accent-primary)}
+
+/* ================================================================
+   RESULTS
+   ================================================================ */
+.results-hero{text-align:center;padding:var(--space-8) var(--space-7);background:var(--color-bg-primary);border:1px solid var(--color-border-secondary);border-radius:var(--radius-lg);margin-bottom:var(--space-6)}
+.results-hero .rh-label{font-size:var(--fs-sm);color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:var(--ls-wide)}
+.results-hero .rh-value{font-family:var(--font-mono);font-size:var(--fs-3xl);font-weight:var(--fw-bold);color:var(--color-text-primary);margin-top:var(--space-3);line-height:var(--lh-tight)}
+.results-hero .rh-value.low{color:var(--color-status-success)}
+.results-hero .rh-sub{font-size:var(--fs-xs);color:var(--color-text-tertiary);margin-top:var(--space-3)}
+
+.table-wrap{overflow-x:auto;margin:var(--space-5) 0}
+table{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
+th,td{padding:var(--space-4) var(--space-5);text-align:left;border-bottom:1px solid var(--color-border-secondary)}
+th{color:var(--color-text-tertiary);font-weight:var(--fw-semi);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:var(--ls-wide)}
+td.num{font-family:var(--font-mono);text-align:right}
+tr.partial td{color:var(--color-status-warning)}
+tr.summary-row td{border-top:2px solid var(--color-border-primary);font-weight:var(--fw-semi)}
+
+/* ================================================================
+   OPTIMIZATION CARDS
+   ================================================================ */
+.opt-cards{display:grid;gap:var(--space-5);margin-top:var(--space-6)}
+.opt-card{background:var(--color-status-warning-bg);border:1px solid var(--color-status-warning);border-radius:var(--radius-md);padding:var(--space-6)}
+.opt-card.cap-warn{background:var(--color-status-error-bg);border-color:var(--color-status-error)}
+.opt-card h4{font-size:var(--fs-sm);font-weight:var(--fw-bold);color:var(--color-status-warning);margin-bottom:var(--space-3);display:flex;align-items:center;gap:var(--space-3)}
+.opt-card.cap-warn h4{color:var(--color-status-error)}
+.opt-card p{font-size:var(--fs-sm);color:var(--color-text-primary);line-height:var(--lh-relaxed)}
+
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-top:var(--space-5)}
+@media(max-width:559px){.compare-grid{grid-template-columns:1fr}}
+@media(max-width:559px){input[type="text"],input[type="number"],input[type="date"],select{font-size:16px}}
+.compare-card{background:var(--color-bg-primary);border:1px solid var(--color-border-secondary);border-radius:var(--radius-md);padding:var(--space-5);text-align:center}
+.compare-card h4{font-size:var(--fs-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-3);text-transform:uppercase;letter-spacing:var(--ls-wide)}
+.compare-card .cv{font-family:var(--font-mono);font-size:var(--fs-lg);font-weight:var(--fw-semi);color:var(--color-accent-primary)}
+.compare-card.best{border-color:var(--color-accent-primary);background:var(--color-accent-secondary)}
+
+/* ================================================================
+   TOAST
+   ================================================================ */
+.toast{position:fixed;bottom:var(--space-9);left:50%;transform:translateX(-50%) translateY(20px);background:var(--color-bg-inverse);color:var(--color-text-inverse);padding:var(--space-5) var(--space-7);border-radius:var(--radius-md);font-size:var(--fs-sm);font-weight:var(--fw-semi);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease);pointer-events:none;z-index:100}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ================================================================
+   TOOLTIPS
+   ================================================================ */
+.tip-wrap{position:relative;display:inline-flex;align-items:center;margin-left:var(--space-3)}
+.tip-icon{width:18px;height:18px;border-radius:50%;background:var(--color-bg-tertiary);border:1px solid var(--color-border-primary);color:var(--color-text-tertiary);font-size:var(--fs-xs);font-weight:var(--fw-bold);display:inline-flex;align-items:center;justify-content:center;cursor:help;transition:all var(--dur-fast) var(--ease);font-style:normal;line-height:1;flex-shrink:0}
+.tip-icon:hover,.tip-icon:focus{background:var(--color-accent-secondary);border-color:var(--color-accent-primary);color:var(--color-accent-primary)}
+.tip-bubble{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--color-bg-inverse);color:var(--color-text-inverse);font-size:var(--fs-xs);font-weight:var(--fw-normal);line-height:var(--lh-relaxed);padding:var(--space-5) var(--space-6);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);width:260px;opacity:0;pointer-events:none;transition:opacity var(--dur-fast) var(--ease);z-index:60;text-transform:none;letter-spacing:var(--ls-normal)}
+.tip-bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--color-bg-inverse)}
+.tip-wrap:hover .tip-bubble,.tip-icon:focus+.tip-bubble{opacity:1;pointer-events:auto}
+@media(max-width:559px){.tip-bubble{left:auto;right:-8px;transform:none}.tip-bubble::after{left:auto;right:16px;transform:none}}
+
+/* ================================================================
+   CATEGORIZED TABLE
+   ================================================================ */
+.cat-header td{background:var(--color-bg-tertiary);font-weight:var(--fw-semi);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:var(--ls-wide);color:var(--color-text-secondary);border-bottom:1px solid var(--color-border-primary)}
+.cat-subtotal td{font-weight:var(--fw-semi);color:var(--color-text-secondary);font-size:var(--fs-xs);border-bottom:2px solid var(--color-border-secondary)}
+.eff-rate{font-size:var(--fs-xs);color:var(--color-text-tertiary);margin-top:var(--space-2)}
+
+/* ================================================================
+   UTILITY
+   ================================================================ */
+.hidden{display:none!important}
+.divider{border:none;border-top:1px solid var(--color-border-secondary);margin:var(--space-6) 0}
+.config-note{font-family:var(--font-mono);font-size:10px;color:var(--color-text-tertiary);white-space:pre-wrap;max-height:120px;overflow-y:auto;padding:var(--space-5);background:var(--color-bg-tertiary);border-radius:var(--radius-md);border:1px solid var(--color-border-secondary);margin-top:var(--space-4)}
+footer{text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);margin-top:var(--space-9);padding-top:var(--space-7);border-top:1px solid var(--color-border-secondary)}
+footer a{color:var(--color-text-link)}
+
+/* ================================================================
+   PRINT
+   ================================================================ */
+@media print{
+  .progress,.nav-bar,.theme-toggle,.btn-copy,.btn-add,.collapsible-trigger,footer,details{display:none!important}
+  body{background:#fff;color:#000;font-size:11pt}
+  .card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
+  .step-panel{display:block!important}
+  .results-hero{border:2px solid #000}
+  .results-hero .rh-value{color:#000}
+  .hidden{display:block!important}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="header">
+    <div class="header-left">
+      <h1>Singapore Income Tax <span>Calculator</span></h1>
+      <p class="header-sub">YA 2026 (income earned in 2025). Not tax advice — verify with <a href="https://www.iras.gov.sg" target="_blank" rel="noopener">IRAS</a>.</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light/dark mode" title="Toggle theme">☀️</button>
+  </header>
+
+  <nav class="progress" id="progressBar" aria-label="Step progress"></nav>
+
+  <!-- ============ STEP 0: YOU & INCOME ============ -->
+  <section class="card step-panel" data-step="0">
+    <h2>You &amp; income</h2>
+    <div class="field income-field">
+      <label>Gross employment income (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Your total salary, bonus, and benefits-in-kind before CPF deductions. This is the amount on your IR8A form from your employer.</span></span></label>
+      <input type="number" id="incomeYou" min="0" step="100" value="85000" placeholder="0">
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Age <span class="hint">(31 Dec 2025)</span> <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Your age as of 31 Dec of the basis year (2025). Affects Earned Income Relief tiers: under 55 ($1,000), 55–59 ($6,000), 60+ ($8,000). Also affects CPF contribution rates.</span></span></label>
+        <input type="number" id="ageYou" min="16" max="120" value="35">
+      </div>
+      <div class="field">
+        <label>Citizenship <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Affects CPF rates (foreigners get no CPF relief), SRS cap ($15,300 for SC/SPR, $35,700 for foreigners), and non-resident tax treatment.</span></span></label>
+        <select id="citizenYou">
+          <option value="SC">Singapore Citizen</option>
+          <option value="SPR">Permanent Resident</option>
+          <option value="FR">Foreigner</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Gender <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Used to determine Working Mother's Child Relief (WMCR) eligibility — only available to married working mothers.</span></span></label>
+        <select id="genderYou"><option value="M">Male</option><option value="F">Female</option></select>
+      </div>
+      <div class="field">
+        <div class="chk-row">
+          <input type="checkbox" id="taxResident" checked>
+          <label for="taxResident">Tax resident (183+ days) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">You're a tax resident if you stayed/worked in Singapore for 183+ days in 2025. Non-residents are taxed at a flat 15% or progressive rates (whichever is higher), with no personal reliefs.</span></span></label>
+        </div>
+      </div>
+    </div>
+    <div class="live-preview" id="livePreview">
+      <span class="lp-label">Estimated tax (before reliefs)</span>
+      <span class="lp-value" id="liveEstimate">—</span>
+    </div>
+    <button class="collapsible-trigger" type="button"><span class="chevron">▶</span> Advanced options</button>
+    <div class="collapsible-body" id="advancedOpts">
+      <div class="grid-2" style="padding-top:var(--space-5)">
+        <div class="chk-row"><input type="checkbox" id="disabledYou"><label for="disabledYou">Earned Income Relief (disability) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Higher EIR for persons with a disability: under 55 ($4,000), 55–59 ($10,000), 60+ ($12,000). You must have earned income to qualify.</span></span></label></div>
+        <div class="field"><label>Override CPF relief (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">By default, we estimate your CPF employee contribution from salary × age-based rate. Enter your actual amount here if it differs (e.g. due to additional wages or employer top-ups).</span></span></label><input type="number" id="cpfYouOverride" min="0" step="100" placeholder="Leave blank to auto-estimate"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 1: FAMILY ============ -->
+  <section class="card step-panel hidden" data-step="1">
+    <h2>Family &amp; dependants</h2>
+    <div class="chk-row" style="margin-bottom:var(--space-6)">
+      <input type="checkbox" id="married">
+      <label for="married" style="font-weight:var(--fw-semi)">I am married</label>
+    </div>
+    <div id="spouseSection" class="hidden">
+      <h3 class="section-heading">Spouse</h3>
+      <div class="grid-2">
+        <div class="field"><label>Spouse annual income (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Your spouse's total income from all sources (employment, trade, rent). If ≤$8,000, you qualify for Spouse Relief ($2,000). This is used for eligibility, not for calculating your spouse's tax.</span></span></label><input type="number" id="spouseIncome" min="0" step="100" value="0"></div>
+        <div class="field"><label>Spouse age</label><input type="number" id="spouseAge" min="16" max="120" value="35"></div>
+      </div>
+      <div class="chk-row"><input type="checkbox" id="spouseDisabled"><label for="spouseDisabled">Spouse disability (relief tier) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">If your spouse has a disability, Spouse Relief increases from $2,000 to $5,500.</span></span></label></div>
+      <div class="chk-row"><input type="checkbox" id="husbandNSmanEligible"><label for="husbandNSmanEligible">Husband eligible for NSman (Self) relief <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">If the husband is an NSman, the wife (SC only) can claim NSman Wife Relief of $750. Check this if the husband qualifies for any NSman Self relief tier.</span></span></label></div>
+      <div class="grid-2" style="margin-top:var(--space-5)">
+        <div class="field"><label>Spouse employment income (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Enter your spouse's employment income to run a side-by-side tax comparison and find the optimal relief allocation between you.</span></span></label><input type="number" id="incomeSpouse" min="0" step="100" value="0"></div>
+        <div class="field"><label>Spouse SRS (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Your spouse's SRS contribution for the comparison calculation. Same caps apply: $15,300 for SC/SPR, $35,700 for foreigners.</span></span></label><input type="number" id="srsSpouse" min="0" step="100" value="0"></div>
+      </div>
+      <button class="collapsible-trigger" type="button"><span class="chevron">▶</span> Spouse advanced</button>
+      <div class="collapsible-body">
+        <div class="grid-2" style="padding-top:var(--space-5)">
+          <div class="field"><label>Spouse CPF override (S$)</label><input type="number" id="cpfSpouseOverride" min="0" step="100" placeholder="Auto if blank"></div>
+          <div class="chk-row"><input type="checkbox" id="disabledSpousePerson"><label for="disabledSpousePerson">Spouse: Earned Income (disability)</label></div>
+        </div>
+      </div>
+      <hr class="divider">
+    </div>
+
+    <h3 class="section-heading">Children</h3>
+    <p class="section-desc">Qualifying children: unmarried, under 16, or student under 25, or serving full-time NS.</p>
+    <div id="childrenContainer"></div>
+    <button type="button" class="btn-add" id="addChild">+ Add child</button>
+
+    <hr class="divider">
+    <h3 class="section-heading">Parents / grandparents <span class="hint">(max 2 dependants)</span></h3>
+    <div id="parentsContainer"></div>
+    <button type="button" class="btn-add" id="addParent">+ Add dependant</button>
+
+    <hr class="divider">
+    <div id="sharingControls" class="hidden">
+      <h3 class="section-heading">Relief sharing with spouse</h3>
+      <div class="grid-2">
+        <div class="field"><label>Your QCR share (%) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Qualifying Child Relief can be split between spouses. 100% = you claim all. 50% = split equally. The optimizer on the Results tab will suggest the best split.</span></span></label><input type="number" id="qcrShareYou" min="0" max="100" value="50" step="5"></div>
+        <div class="field"><label>Your PTR share (%) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Parenthood Tax Rebate is a tax rebate (not relief) of $5k/$10k/$20k per child (SC only). It can be shared between spouses in any proportion.</span></span></label><input type="number" id="ptrShareYou" min="0" max="100" value="50" step="5"></div>
+        <div class="field"><label>Your Parent Relief share (%) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Parent/Grandparent Relief can be shared with siblings or spouse. 100% = you claim the full amount. Only one person can claim each parent.</span></span></label><input type="number" id="parentShareYou" min="0" max="100" value="100" step="5"></div>
+      </div>
+    </div>
+    <div id="gcrWrap" class="hidden">
+      <div class="chk-row"><input type="checkbox" id="gcrEligible"><label for="gcrEligible">Grandparent Caregiver Relief ($3,000) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">For married working mothers whose parent/grandparent/in-law cares for their child (aged 12 or under). $3,000 relief. Only one married couple can claim per household.</span></span></label></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 2: RELIEFS ============ -->
+  <section class="card step-panel hidden" data-step="2">
+    <h2>Reliefs &amp; contributions</h2>
+    <div class="cap-bar-wrap" id="capBarWrap">
+      <div class="cap-bar-header"><span>Total reliefs</span><span id="capBarLabel">$0 / $80,000</span></div>
+      <div class="cap-bar"><div class="cap-bar-fill ok" id="capBarFill" style="width:0%"></div></div>
+    </div>
+    <h3 class="section-heading" style="margin-bottom:var(--space-4)">Auto-granted (from your profile)</h3>
+    <div class="auto-reliefs" id="autoReliefs"></div>
+    <hr class="divider">
+    <h3 class="section-heading">Voluntary contributions</h3>
+    <div class="grid-2">
+      <div class="field"><label>SRS contribution (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Supplementary Retirement Scheme — voluntary savings for retirement. Contributions are tax-deductible. Cap: $15,300/yr for SC/SPR, $35,700 for foreigners. Withdrawals taxed at 50% when eligible.</span></span></label><input type="number" id="srsYou" min="0" step="100" value="0"></div>
+      <div class="field"><label>CPF cash top-up — self (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Voluntary cash top-ups to your own CPF Special Account (SA) or Retirement Account (RA). Tax relief capped at $8,000/yr. Must be a cash top-up (not a transfer from OA).</span></span></label><input type="number" id="cpfTopupSelf" min="0" step="100" value="0"></div>
+      <div class="field"><label>CPF cash top-up — family (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Cash top-ups to your spouse, siblings, parents, or grandparents' CPF SA/RA. Separate $8,000/yr cap on top of the self top-up cap.</span></span></label><input type="number" id="cpfTopupFamily" min="0" step="100" value="0"></div>
+      <div class="field"><label>Life insurance relief (S$) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Premiums paid on life insurance policies. Capped at $5,000. Only claimable if your CPF contributions are less than $5,000 (i.e. most employed people won't benefit from this).</span></span></label><input type="number" id="lifeIns" min="0" step="100" value="0"></div>
+    </div>
+    <hr class="divider">
+    <h3 class="section-heading">Other reliefs</h3>
+    <div class="grid-2">
+      <div class="field"><label>NSman (self) tier <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">National Service relief for eligible NSmen. Key appointment holders: $5,000. Active NSmen: $3,000. Other NSmen (completed NS): $1,500. Must have performed NS duties in the basis year.</span></span></label>
+        <select id="nsmanSelf"><option value="0">Not claiming</option><option value="1500" selected>Other — $1,500</option><option value="3000">Active — $3,000</option><option value="5000">Key appointment — $5,000</option></select>
+      </div>
+      <div class="chk-row"><input type="checkbox" id="nsmanParent"><label for="nsmanParent">NSman Parent relief ($750) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Parents of NSmen can claim $750 each. Both parents can claim. The NSman son must be eligible for NSman Self relief.</span></span></label></div>
+      <div class="chk-row"><input type="checkbox" id="siblingDisability"><label for="siblingDisability">Sibling disability relief ($5,500) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">For maintaining a sibling with a physical or mental disability. $5,500 relief. The sibling must not be claimed by anyone else as a dependant.</span></span></label></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 3: RESULTS ============ -->
+  <section class="card step-panel hidden" data-step="3">
+    <h2>Results &amp; optimizer</h2>
+    <div class="results-hero">
+      <div class="rh-label">Estimated net tax payable</div>
+      <div class="rh-value" id="netTaxYou">—</div>
+      <div class="rh-sub">YA 2026 · Tax resident estimate</div>
+    </div>
+    <div class="table-wrap"><table id="reliefTableYou"><thead><tr><th>Item</th><th style="text-align:right">S$</th></tr></thead><tbody></tbody></table></div>
+    <div id="spouseResultsBlock" class="hidden">
+      <hr class="divider">
+      <h3 class="section-heading" style="margin:var(--space-6) 0 var(--space-4)">Spouse</h3>
+      <div class="results-hero" style="padding:var(--space-6)">
+        <div class="rh-label">Spouse net tax</div>
+        <div class="rh-value" id="netTaxSpouse" style="font-size:var(--fs-xl)">—</div>
+      </div>
+      <div class="table-wrap"><table id="reliefTableSpouse"><thead><tr><th>Item</th><th style="text-align:right">S$</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div id="compareBlock" class="hidden">
+      <hr class="divider">
+      <h3 class="section-heading" style="margin-bottom:var(--space-4)">Household comparison — QCR split</h3>
+      <div class="compare-grid" id="compareGrid"></div>
+    </div>
+    <div id="optCards" class="opt-cards hidden"></div>
+    <button type="button" class="btn-copy" id="btnCopy" aria-label="Copy tax summary to clipboard">📋 Copy summary</button>
+  </section>
+
+  <div class="nav-bar">
+    <button type="button" class="btn btn-ghost" id="btnBack">Back</button>
+    <button type="button" class="btn btn-primary" id="btnNext">Continue</button>
+  </div>
+
+  <details style="margin-top:var(--space-7)">
+    <summary style="cursor:pointer;color:var(--color-text-tertiary);font-size:var(--fs-xs)">Tax rules config (JSON)</summary>
+    <pre class="config-note" id="configPreview"></pre>
+  </details>
+
+  <footer>Educational estimate only · WMCR/QCR/PTR conditions simplified · <a href="https://www.iras.gov.sg/taxes/individual-income-tax" target="_blank" rel="noopener">Verify with IRAS</a></footer>
+</main>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+(function(){
+'use strict';
+
+const TAX_CONFIG={meta:{yearOfAssessment:2026,basisYear:2025},reliefCap:80000,incomeThreshold:{spouseParentDependant:8000},wmcrCutoverDate:'2024-01-01',progressiveTax:{bands:[{upto:20000,rate:0},{upto:10000,rate:.02},{upto:10000,rate:.035},{upto:40000,rate:.07},{upto:40000,rate:.115},{upto:40000,rate:.15},{upto:40000,rate:.18},{upto:40000,rate:.19},{upto:40000,rate:.195},{upto:40000,rate:.20},{upto:180000,rate:.22},{upto:500000,rate:.23},{upto:Infinity,rate:.24}]},nonResidentEmploymentFlat:.15,earnedIncomeRelief:{normal:{lt55:1000,b55_59:6000,gte60:8000},disability:{lt55:4000,b55_59:10000,gte60:12000}},spouseRelief:{normal:2000,disability:5500},qcr:{normal:4000,disability:7500},wmcrFixed:{first:8000,second:10000,thirdPlus:12000},wmcrPctLegacy:{first:.15,second:.20,thirdPlus:.25},qcrWmcrCapPerChild:50000,parentRelief:{together:{normal:9000,disability:14000},apart:{normal:5500,disability:10000},minAge:55,maxDependants:2},grandparentCaregiver:3000,srsCap:{SC_SPR:15300,FR:35700},cpfTopUp:{self:8000,family:8000},siblingDisability:5500,lifeInsuranceMax:5000,nsman:{wife:750,parent:750},nsmanSelfTiers:{key:5000,active:3000,other:1500},ptr:{first:5000,second:10000,thirdPlus:20000},personalIncomeTaxRebate:{rateOfTax:.6,maxRebate:200},cpfEmployeeRates:[{maxAge:55,employeePct:.20},{maxAge:60,employeePct:.15},{maxAge:65,employeePct:.095},{maxAge:70,employeePct:.07},{maxAge:Infinity,employeePct:.05}],cpfMonthlyCeiling:7400};
+
+const el=id=>document.getElementById(id);
+const fmt=n=>(Math.round(n*100)/100).toLocaleString('en-SG',{minimumFractionDigits:0,maximumFractionDigits:2});
+
+function taxResidentProgressive(c){let r=Math.max(0,c),t=0;for(const b of TAX_CONFIG.progressiveTax.bands){if(r<=0)break;const s=b.upto===Infinity?r:Math.min(r,b.upto);t+=s*b.rate;r-=s;}return t;}
+function taxNonResidentEmployment(e){return Math.max(TAX_CONFIG.nonResidentEmploymentFlat*e,taxResidentProgressive(e));}
+function earnedIncomeReliefAmount(age,dis,earned){const t=dis?TAX_CONFIG.earnedIncomeRelief.disability:TAX_CONFIG.earnedIncomeRelief.normal;let m;if(age<55)m=t.lt55;else if(age<=59)m=t.b55_59;else m=t.gte60;return Math.min(m,Math.max(0,earned));}
+function cpfEmployeePct(age){for(const r of TAX_CONFIG.cpfEmployeeRates)if(age<=r.maxAge)return r.employeePct;return TAX_CONFIG.cpfEmployeeRates[TAX_CONFIG.cpfEmployeeRates.length-1].employeePct;}
+function estimateCpfEmployeeRelief(ann,age,cit,ov){if(ov!==''&&ov!=null&&!Number.isNaN(Number(ov)))return Math.max(0,Number(ov));if(cit==='FR')return 0;return Math.round(Math.min(ann/12,TAX_CONFIG.cpfMonthlyCeiling)*cpfEmployeePct(age)*12*100)/100;}
+function capSRS(a,cit){return Math.min(Math.max(0,a),cit==='FR'?TAX_CONFIG.srsCap.FR:TAX_CONFIG.srsCap.SC_SPR);}
+
+function parseChildren(){const rows=document.querySelectorAll('#childrenContainer .sub-block'),list=[];rows.forEach((r,idx)=>{const dob=r.querySelector('.c-dob').value,sg=r.querySelector('.c-sg').checked,dis=r.querySelector('.c-dis').checked,qual=r.querySelector('.c-qual').checked;if(!qual)return;list.push({dob,sgCitizen:sg,disability:dis,idx});});list.sort((a,b)=>(a.dob||'').localeCompare(b.dob||''));return list;}
+function parseParents(){const rows=document.querySelectorAll('#parentsContainer .sub-block'),list=[];rows.forEach(r=>{const age=Number(r.querySelector('.p-age').value)||0,inc=Number(r.querySelector('.p-inc').value)||0,tog=r.querySelector('.p-together').checked,dis=r.querySelector('.p-dis').checked,qual=r.querySelector('.p-qual').checked;if(!qual)return;list.push({age,income:inc,livingTogether:tog,disability:dis});});return list.slice(0,TAX_CONFIG.parentRelief.maxDependants);}
+function childOrderWMCRAmount(ch,earned,cutover){const q=[],w=[];for(let i=0;i<ch.length;i++){const c=ch[i],o=i+1,qcr=c.disability?TAX_CONFIG.qcr.disability:TAX_CONFIG.qcr.normal;let wm;if(c.dob>=cutover){wm=o===1?TAX_CONFIG.wmcrFixed.first:o===2?TAX_CONFIG.wmcrFixed.second:TAX_CONFIG.wmcrFixed.thirdPlus;}else{const p=o===1?TAX_CONFIG.wmcrPctLegacy.first:o===2?TAX_CONFIG.wmcrPctLegacy.second:TAX_CONFIG.wmcrPctLegacy.thirdPlus;wm=earned*p;}const combined=Math.min(qcr+wm,TAX_CONFIG.qcrWmcrCapPerChild);w.push(Math.max(0,combined-qcr));q.push(qcr);}return{qcrPerChild:q,wmcrPerChild:w};}
+function ptrTotal(ch){let t=0;ch.forEach((c,i)=>{if(!c.sgCitizen)return;const o=i+1;t+=o===1?TAX_CONFIG.ptr.first:o===2?TAX_CONFIG.ptr.second:TAX_CONFIG.ptr.thirdPlus;});return t;}
+function applyCap(lines,cap){const items=lines.filter(x=>x.amount>0),raw=items.reduce((s,x)=>s+x.amount,0);if(raw<=cap||raw===0)return{lines:items.map(x=>({...x,wasted:0})),rawTotal:raw,cappedTotal:raw,wasted:[],hitCap:false};const sc=cap/raw,out=[],wasted=[];items.forEach(x=>{const a=Math.round(x.amount*sc*100)/100,w=Math.round((x.amount-a)*100)/100;if(w>.005)wasted.push({key:x.key,wasted:w});out.push({...x,amount:a,wasted:w});});let s=out.reduce((a,x)=>a+x.amount,0);const d=Math.round((cap-s)*100)/100;if(out.length&&Math.abs(d)>.001)out[out.length-1].amount=Math.round((out[out.length-1].amount+d)*100)/100;return{lines:out,rawTotal:raw,cappedTotal:cap,wasted,hitCap:true};}
+
+function computePerson(o){const{income,age,gender,citizenship,taxResident,disabledYou,spouseIncome,spouseDisabled,married,childrenSorted,cutover,qcrShareYouFrac,ptrShareYouFrac,parents,parentShareYouFrac,gcr,srs,topSelf,topFam,lifeIns,siblingDis,nsSelf,nsParent,nsWife,cpfOverride,workingMother}=o;const lines=[],earned=Math.max(0,income);if(!taxResident){const g=citizenship==='FR'?taxNonResidentEmployment(earned):taxResidentProgressive(earned);return{lines:[{key:'Personal reliefs (non-resident)',amount:0}],rawRelief:0,relief:0,reliefWasted:[],hitReliefCap:false,chargeable:earned,grossTax:g,ptr:0,ptrPool:ptrTotal(childrenSorted),rebate:0,netTax:g};}
+lines.push({key:'Earned Income Relief',amount:earnedIncomeReliefAmount(age,disabledYou,earned),cat:'personal'});
+lines.push({key:'CPF Relief (employee)',amount:estimateCpfEmployeeRelief(earned,age,citizenship,cpfOverride),cat:'personal'});
+if(married&&spouseIncome<=TAX_CONFIG.incomeThreshold.spouseParentDependant){lines.push({key:'Spouse Relief',amount:spouseDisabled?TAX_CONFIG.spouseRelief.disability:TAX_CONFIG.spouseRelief.normal,cat:'family'});}
+let qcrYou=0,wmcrYou=0;if(childrenSorted.length){const{qcrPerChild,wmcrPerChild}=childOrderWMCRAmount(childrenSorted,earned,cutover);for(let i=0;i<childrenSorted.length;i++){qcrYou+=qcrPerChild[i]*qcrShareYouFrac;if(workingMother&&childrenSorted[i].sgCitizen)wmcrYou+=wmcrPerChild[i];}lines.push({key:'Qualifying Child Relief',amount:Math.round(qcrYou*100)/100,cat:'family'});if(workingMother&&wmcrYou>0)lines.push({key:"Working Mother's Child Relief",amount:Math.round(wmcrYou*100)/100,cat:'family'});}
+let pt=0;parents.forEach(p=>{if(p.disability){pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.disability:TAX_CONFIG.parentRelief.apart.disability;}else{if(p.income>TAX_CONFIG.incomeThreshold.spouseParentDependant||p.age<TAX_CONFIG.parentRelief.minAge)return;pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.normal:TAX_CONFIG.parentRelief.apart.normal;}});if(pt>0)lines.push({key:'Parent Relief',amount:Math.round(pt*parentShareYouFrac*100)/100,cat:'family'});
+if(gcr)lines.push({key:'Grandparent Caregiver Relief',amount:TAX_CONFIG.grandparentCaregiver,cat:'family'});
+if(siblingDis)lines.push({key:'Sibling (Disability) Relief',amount:TAX_CONFIG.siblingDisability,cat:'family'});
+const sa=capSRS(srs,citizenship);if(sa>0)lines.push({key:'SRS Relief',amount:sa,cat:'voluntary'});
+const ts=Math.min(topSelf,TAX_CONFIG.cpfTopUp.self),tf=Math.min(topFam,TAX_CONFIG.cpfTopUp.family);if(ts>0)lines.push({key:'CPF Cash Top-up (self)',amount:ts,cat:'voluntary'});if(tf>0)lines.push({key:'CPF Cash Top-up (family)',amount:tf,cat:'voluntary'});
+if(lifeIns>0)lines.push({key:'Life Insurance Relief',amount:Math.min(lifeIns,TAX_CONFIG.lifeInsuranceMax),cat:'voluntary'});
+if(nsSelf>0)lines.push({key:'NSman (Self) Relief',amount:nsSelf,cat:'other'});if(nsWife)lines.push({key:'NSman (Wife) Relief',amount:TAX_CONFIG.nsman.wife,cat:'other'});if(nsParent)lines.push({key:'NSman (Parent) Relief',amount:TAX_CONFIG.nsman.parent,cat:'other'});
+const capped=applyCap(lines,TAX_CONFIG.reliefCap),chargeable=Math.max(0,earned-capped.cappedTotal);
+let grossTax=(!taxResident&&citizenship==='FR')?taxNonResidentEmployment(earned):taxResidentProgressive(chargeable);
+const pool=ptrTotal(childrenSorted),ptrYou=pool*ptrShareYouFrac,afterPtr=Math.max(0,grossTax-ptrYou),reb=TAX_CONFIG.personalIncomeTaxRebate,rebAmt=Math.min(reb.maxRebate,afterPtr*reb.rateOfTax),net=Math.max(0,afterPtr-rebAmt);
+return{lines:capped.lines,rawRelief:capped.rawTotal,relief:capped.cappedTotal,reliefWasted:capped.wasted,hitReliefCap:capped.hitCap,chargeable,grossTax,ptr:ptrYou,ptrPool:pool,rebate:rebAmt,netTax:net};}
+
+// ============ THEME ============
+function initTheme(){const saved=localStorage.getItem('sg-tax-theme');if(saved){document.documentElement.setAttribute('data-theme',saved);}updateThemeIcon();}
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('sg-tax-theme',next);updateThemeIcon();}
+function updateThemeIcon(){const dark=document.documentElement.getAttribute('data-theme')==='dark'||(document.documentElement.getAttribute('data-theme')!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);el('themeToggle').textContent=dark?'☀️':'🌙';}
+el('themeToggle').addEventListener('click',toggleTheme);
+initTheme();
+
+// ============ STEPPER ============
+let currentStep=0;
+const STEPS=['You & Income','Family','Reliefs','Results'];
+function renderProgress(){const nav=el('progressBar');nav.innerHTML='';STEPS.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.className='prog-step'+(i===currentStep?' active':i<currentStep?' done':'');b.innerHTML='<span class="num">'+(i<currentStep?'✓':(i+1))+'</span><span class="lbl">'+label+'</span>';b.addEventListener('click',()=>{currentStep=i;updateStep();});nav.appendChild(b);});}
+function updateStep(){document.querySelectorAll('.step-panel').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==currentStep));el('btnBack').style.visibility=currentStep===0?'hidden':'visible';el('btnNext').textContent=currentStep===STEPS.length-1?'Recalculate':'Continue';renderProgress();if(currentStep===2)updateReliefsStep();if(currentStep===3)runResults();}
+el('btnBack').addEventListener('click',()=>{if(currentStep>0){currentStep--;updateStep();}});
+el('btnNext').addEventListener('click',()=>{if(currentStep<STEPS.length-1){currentStep++;updateStep();}else{runResults();}});
+
+// ============ CONDITIONAL VISIBILITY ============
+el('married').addEventListener('change',()=>{
+  const m=el('married').checked;
+  el('spouseSection').classList.toggle('hidden',!m);
+  el('sharingControls').classList.toggle('hidden',!m);
+  updateGcrVisibility();
+});
+function updateGcrVisibility(){
+  const show=el('married').checked&&el('genderYou').value==='F'&&(Number(el('incomeYou').value)||0)>0;
+  el('gcrWrap').classList.toggle('hidden',!show);
+}
+el('genderYou').addEventListener('change',updateGcrVisibility);
+
+// ============ LIVE PREVIEW ============
+function updateLivePreview(){
+  const inc=Number(el('incomeYou').value)||0;
+  const age=Number(el('ageYou').value)||35;
+  const cit=el('citizenYou').value;
+  const cpfEst=estimateCpfEmployeeRelief(inc,age,cit,'');
+  const eir=earnedIncomeReliefAmount(age,false,inc);
+  const chargeable=Math.max(0,inc-cpfEst-eir);
+  const tax=el('taxResident').checked?taxResidentProgressive(chargeable):(cit==='FR'?taxNonResidentEmployment(inc):taxResidentProgressive(inc));
+  el('liveEstimate').textContent='~ $'+fmt(tax);
+}
+['incomeYou','ageYou','citizenYou','taxResident'].forEach(id=>{el(id).addEventListener('input',updateLivePreview);el(id).addEventListener('change',updateLivePreview);});
+updateLivePreview();
+
+// ============ ADD CHILD / PARENT ============
+let childCount=0;
+function addChildRow(){childCount++;const d=document.createElement('div');d.className='sub-block';d.innerHTML='<h3>Child '+childCount+'</h3><div class="grid-2"><div class="field"><label>Date of birth</label><input type="date" class="c-dob" value="2020-06-01"></div><div class="field"><div class="chk-row" style="margin-top:22px"><input type="checkbox" class="c-sg" checked><label>Singapore Citizen</label></div></div></div><div class="chk-row"><input type="checkbox" class="c-dis"><label>Child relief (disability)</label></div><div class="chk-row"><input type="checkbox" class="c-qual" checked><label>Qualifying child this YA</label></div>';el('childrenContainer').appendChild(d);}
+function addParentRow(){const d=document.createElement('div');d.className='sub-block';d.innerHTML='<h3>Dependant</h3><div class="grid-2"><div class="field"><label>Age (31 Dec 2025)</label><input type="number" class="p-age" value="65" min="0" max="120"></div><div class="field"><label>Annual income (S$)</label><input type="number" class="p-inc" value="0" min="0" step="500"></div></div><div class="chk-row"><input type="checkbox" class="p-together" checked><label>Lives in same household</label></div><div class="chk-row"><input type="checkbox" class="p-dis"><label>Parent relief (disability)</label></div><div class="chk-row"><input type="checkbox" class="p-qual" checked><label>Claiming this dependant</label></div>';el('parentsContainer').appendChild(d);}
+el('addChild').addEventListener('click',addChildRow);
+el('addParent').addEventListener('click',addParentRow);
+
+// ============ COLLAPSIBLES ============
+document.querySelectorAll('.collapsible-trigger').forEach(trigger=>{trigger.addEventListener('click',()=>{trigger.classList.toggle('open');const body=trigger.nextElementSibling;body.classList.toggle('open');});});
+
+// ============ RELIEFS STEP — auto display ============
+function updateReliefsStep(){
+  const inc=Number(el('incomeYou').value)||0,age=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,married=el('married').checked,spouseInc=Number(el('spouseIncome').value)||0,spouseDis=el('spouseDisabled').checked,husbandNS=el('husbandNSmanEligible').checked;
+  const auto=[];
+  auto.push({name:'Earned Income Relief',val:earnedIncomeReliefAmount(age,el('disabledYou').checked,inc)});
+  auto.push({name:'CPF Relief (employee)',val:estimateCpfEmployeeRelief(inc,age,cit,el('cpfYouOverride').value)});
+  if(married&&spouseInc<=TAX_CONFIG.incomeThreshold.spouseParentDependant)auto.push({name:'Spouse Relief',val:spouseDis?TAX_CONFIG.spouseRelief.disability:TAX_CONFIG.spouseRelief.normal});
+  const children=parseChildren();if(children.length){const{qcrPerChild,wmcrPerChild}=childOrderWMCRAmount(children,inc,TAX_CONFIG.wmcrCutoverDate);const qShare=(Number(el('qcrShareYou').value)||50)/100;let qcr=0;children.forEach((_,i)=>qcr+=qcrPerChild[i]*qShare);auto.push({name:'Qualifying Child Relief',val:Math.round(qcr*100)/100});const wm=married&&gender==='F'&&inc>0;if(wm){let wmcr=0;children.forEach((c,i)=>{if(c.sgCitizen)wmcr+=wmcrPerChild[i];});if(wmcr>0)auto.push({name:"Working Mother's Child Relief",val:Math.round(wmcr*100)/100});}}
+  const parents=parseParents();if(parents.length){let pt=0;parents.forEach(p=>{if(p.disability){pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.disability:TAX_CONFIG.parentRelief.apart.disability;}else{if(p.income>TAX_CONFIG.incomeThreshold.spouseParentDependant||p.age<TAX_CONFIG.parentRelief.minAge)return;pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.normal:TAX_CONFIG.parentRelief.apart.normal;}});const ps=(Number(el('parentShareYou').value)||100)/100;if(pt>0)auto.push({name:'Parent Relief',val:Math.round(pt*ps*100)/100});}
+  if(el('gcrEligible').checked&&married&&gender==='F'&&inc>0)auto.push({name:'Grandparent Caregiver',val:TAX_CONFIG.grandparentCaregiver});
+  if(gender==='F'&&husbandNS&&cit==='SC')auto.push({name:'NSman (Wife) Relief',val:TAX_CONFIG.nsman.wife});
+  const ar=el('autoReliefs');ar.innerHTML='';auto.filter(a=>a.val>0).forEach(a=>{const d=document.createElement('div');d.className='auto-relief-item';d.innerHTML='<span class="ar-name"><span class="ar-check">✓</span> '+a.name+'</span><span class="ar-val">$'+fmt(a.val)+'</span>';ar.appendChild(d);});
+  updateCapBar();
+}
+function updateCapBar(){
+  const inc=Number(el('incomeYou').value)||0,age=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,married=el('married').checked;
+  let total=earnedIncomeReliefAmount(age,el('disabledYou').checked,inc)+estimateCpfEmployeeRelief(inc,age,cit,el('cpfYouOverride').value);
+  if(married&&(Number(el('spouseIncome').value)||0)<=TAX_CONFIG.incomeThreshold.spouseParentDependant)total+=(el('spouseDisabled').checked?TAX_CONFIG.spouseRelief.disability:TAX_CONFIG.spouseRelief.normal);
+  const children=parseChildren();if(children.length){const{qcrPerChild,wmcrPerChild}=childOrderWMCRAmount(children,inc,TAX_CONFIG.wmcrCutoverDate);const qShare=(Number(el('qcrShareYou').value)||50)/100;children.forEach((_,i)=>{total+=qcrPerChild[i]*qShare;});if(married&&gender==='F'&&inc>0)children.forEach((c,i)=>{if(c.sgCitizen)total+=wmcrPerChild[i];});}
+  const parents=parseParents();if(parents.length){let pt=0;parents.forEach(p=>{if(p.disability){pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.disability:TAX_CONFIG.parentRelief.apart.disability;}else{if(p.income>TAX_CONFIG.incomeThreshold.spouseParentDependant||p.age<TAX_CONFIG.parentRelief.minAge)return;pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.normal:TAX_CONFIG.parentRelief.apart.normal;}});total+=pt*((Number(el('parentShareYou').value)||100)/100);}
+  if(el('gcrEligible').checked&&married&&gender==='F'&&inc>0)total+=TAX_CONFIG.grandparentCaregiver;
+  if(gender==='F'&&el('husbandNSmanEligible').checked&&cit==='SC')total+=TAX_CONFIG.nsman.wife;
+  total+=capSRS(Number(el('srsYou').value)||0,cit);
+  total+=Math.min(Number(el('cpfTopupSelf').value)||0,TAX_CONFIG.cpfTopUp.self);
+  total+=Math.min(Number(el('cpfTopupFamily').value)||0,TAX_CONFIG.cpfTopUp.family);
+  total+=Math.min(Number(el('lifeIns').value)||0,TAX_CONFIG.lifeInsuranceMax);
+  total+=Number(el('nsmanSelf').value)||0;
+  if(el('nsmanParent').checked)total+=TAX_CONFIG.nsman.parent;
+  if(el('siblingDisability').checked)total+=TAX_CONFIG.siblingDisability;
+  const pct=Math.min(100,total/TAX_CONFIG.reliefCap*100);
+  const fill=el('capBarFill');fill.style.width=pct+'%';fill.className='cap-bar-fill '+(pct>=100?'over':pct>=80?'warn':'ok');
+  el('capBarLabel').textContent='$'+fmt(total)+' / $'+fmt(TAX_CONFIG.reliefCap);
+}
+['srsYou','cpfTopupSelf','cpfTopupFamily','lifeIns','nsmanSelf','nsmanParent','siblingDisability'].forEach(id=>{el(id).addEventListener('input',updateCapBar);el(id).addEventListener('change',updateCapBar);});
+
+// ============ RESULTS ============
+const CAT_ORDER=[{id:'personal',label:'Personal Reliefs'},{id:'family',label:'Family Reliefs'},{id:'voluntary',label:'Voluntary Contributions'},{id:'other',label:'Other Reliefs'}];
+function fillTable(tid,result){
+  const tbody=el(tid).querySelector('tbody');tbody.innerHTML='';
+  CAT_ORDER.forEach(cat=>{
+    const items=result.lines.filter(r=>r.cat===cat.id&&r.amount>0);if(!items.length)return;
+    const hdr=document.createElement('tr');hdr.className='cat-header';hdr.innerHTML='<td colspan="2">'+cat.label+'</td>';tbody.appendChild(hdr);
+    let sub=0;items.forEach(row=>{sub+=row.amount;const tr=document.createElement('tr');if((row.wasted||0)>0)tr.classList.add('partial');tr.innerHTML='<td>'+row.key+(row.wasted>0?' <small style="color:var(--color-status-warning)">(capped)</small>':'')+'</td><td class="num">$'+fmt(row.amount)+'</td>';tbody.appendChild(tr);});
+    const st=document.createElement('tr');st.className='cat-subtotal';st.innerHTML='<td>Subtotal</td><td class="num">$'+fmt(sub)+'</td>';tbody.appendChild(st);
+  });
+  if(result.hitReliefCap){const cr=document.createElement('tr');cr.className='partial';cr.innerHTML='<td><strong>Raw reliefs vs $80k cap</strong></td><td class="num" style="color:var(--color-status-error)">$'+fmt(result.rawRelief)+' → $'+fmt(TAX_CONFIG.reliefCap)+'</td>';tbody.appendChild(cr);}
+  const summaryRows=[['Gross employment income',result.income],['Total reliefs (after cap)',result.relief],['Chargeable income',result.chargeable],['Tax before rebates',result.grossTax]];
+  if(result.ptr>0)summaryRows.push(['Less: Parenthood Tax Rebate',-result.ptr]);
+  if(result.rebate>0)summaryRows.push(['Income tax rebate',-result.rebate]);
+  summaryRows.push(['Net tax payable',result.netTax]);
+  if(result.income>0)summaryRows.push(['Effective tax rate',null]);
+  summaryRows.forEach(([k,v],i)=>{const tr=document.createElement('tr');tr.className='summary-row';if(i===0)tr.style.borderTop='2px solid var(--color-border-primary)';if(v===null){const rate=result.income>0?((result.netTax/result.income)*100).toFixed(2)+'%':'0%';tr.innerHTML='<td><strong>'+k+'</strong></td><td class="num">'+rate+'</td>';}else{tr.innerHTML='<td><strong>'+k+'</strong></td><td class="num">'+(v<0?'−$'+fmt(-v):'$'+fmt(v))+'</td>';}tbody.appendChild(tr);});
+}
+
+function runResults(){
+  const incomeYou=Number(el('incomeYou').value)||0,ageYou=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,taxRes=el('taxResident').checked,married=el('married').checked,spouseInc=Number(el('spouseIncome').value)||0,spouseDis=el('spouseDisabled').checked,husbandNS=el('husbandNSmanEligible').checked;
+  const children=parseChildren(),cutover=TAX_CONFIG.wmcrCutoverDate,qcrShare=(Number(el('qcrShareYou').value)||50)/100,ptrShare=(Number(el('ptrShareYou').value)||50)/100,parents=parseParents(),parentShare=(Number(el('parentShareYou').value)||100)/100;
+  const gcr=el('gcrEligible').checked&&married&&gender==='F'&&incomeYou>0,workingMother=married&&gender==='F'&&incomeYou>0;
+  const resYou=computePerson({income:incomeYou,age:ageYou,gender,citizenship:cit,taxResident:taxRes,disabledYou:el('disabledYou').checked,spouseIncome:married?spouseInc:999999,spouseDisabled:spouseDis,married,childrenSorted:children,cutover,qcrShareYouFrac:qcrShare,ptrShareYouFrac:ptrShare,parents,parentShareYouFrac:parentShare,gcr,srs:Number(el('srsYou').value)||0,topSelf:Number(el('cpfTopupSelf').value)||0,topFam:Number(el('cpfTopupFamily').value)||0,lifeIns:Number(el('lifeIns').value)||0,siblingDis:el('siblingDisability').checked,nsSelf:Number(el('nsmanSelf').value)||0,nsParent:el('nsmanParent').checked,nsWife:gender==='F'&&husbandNS&&cit==='SC',cpfOverride:el('cpfYouOverride').value,workingMother});
+  resYou.income=incomeYou;
+  const heroEl=el('netTaxYou');heroEl.textContent='$'+fmt(resYou.netTax);heroEl.className='rh-value'+(resYou.netTax<=200?' low':'');
+  fillTable('reliefTableYou',resYou);
+
+  const incomeSp=Number(el('incomeSpouse').value)||0,spouseAge=Number(el('spouseAge').value)||35,citSp=cit;
+  let resSpouse=null;
+  if(married&&incomeSp>0){const sg2=gender==='F'?'M':'F';resSpouse=computePerson({income:incomeSp,age:spouseAge,gender:sg2,citizenship:citSp,taxResident:taxRes,disabledYou:el('disabledSpousePerson').checked,spouseIncome:incomeYou,spouseDisabled:el('disabledYou').checked,married,childrenSorted:children,cutover,qcrShareYouFrac:1-qcrShare,ptrShareYouFrac:1-ptrShare,parents,parentShareYouFrac:1-parentShare,gcr:false,srs:Number(el('srsSpouse').value)||0,topSelf:0,topFam:0,lifeIns:0,siblingDis:false,nsSelf:0,nsParent:false,nsWife:sg2==='F'&&husbandNS&&citSp==='SC',cpfOverride:el('cpfSpouseOverride').value,workingMother:married&&sg2==='F'&&incomeSp>0});resSpouse.income=incomeSp;
+    el('spouseResultsBlock').classList.remove('hidden');el('netTaxSpouse').textContent='$'+fmt(resSpouse.netTax);fillTable('reliefTableSpouse',resSpouse);
+  }else{el('spouseResultsBlock').classList.add('hidden');}
+
+  const cards=[];
+  if(resYou.hitReliefCap){
+    const over=resYou.rawRelief-TAX_CONFIG.reliefCap;
+    let capText='Your total reliefs of <strong>$'+fmt(resYou.rawRelief)+'</strong> exceed the $80,000 cap by <strong>$'+fmt(over)+'</strong>. All reliefs are proportionally scaled down.';
+    const wastedDetails=resYou.reliefWasted.filter(w=>w.wasted>50);
+    if(wastedDetails.length){capText+='<br><br><strong>Reliefs partially unused:</strong><ul style="margin:var(--space-3) 0 0 var(--space-6);font-size:var(--fs-xs)">';wastedDetails.forEach(w=>{capText+='<li>'+w.key+': <strong>$'+fmt(w.wasted)+'</strong> wasted</li>';});capText+='</ul>';}
+    const volWasted=wastedDetails.filter(w=>['SRS Relief','CPF Cash Top-up (self)','CPF Cash Top-up (family)','Life Insurance Relief'].includes(w.key));
+    if(volWasted.length){capText+='<br>Consider deferring some voluntary contributions (SRS, CPF top-ups) to next year — they\'re being reduced by the cap anyway.';}
+    if(married){capText+='<br><br>Since you\'re married, consider transferring QCR or Parent Relief to your spouse. They may have more cap headroom.';}
+    cards.push({type:'cap',title:'Relief cap exceeded — $'+fmt(over)+' wasted',text:capText});
+  }
+  const headroom=Math.max(0,TAX_CONFIG.reliefCap-resYou.relief),srsMax=cit==='FR'?TAX_CONFIG.srsCap.FR:TAX_CONFIG.srsCap.SC_SPR,extraSrs=Math.min(Math.max(0,srsMax-(Number(el('srsYou').value)||0)),headroom);
+  if(taxRes&&!resYou.hitReliefCap&&extraSrs>500&&resYou.chargeable>0){const add=Math.min(5000,extraSrs),save=taxResidentProgressive(resYou.chargeable)-taxResidentProgressive(Math.max(0,resYou.chargeable-add));cards.push({type:'srs',title:'SRS opportunity — save ~$'+fmt(save),text:'You have <strong>$'+fmt(headroom)+'</strong> of relief cap headroom. Contributing ~$'+fmt(add)+' more to SRS could reduce tax by ~<strong>$'+fmt(save)+'</strong> (before PTR/rebate). SRS cap: $'+fmt(srsMax)+'.'});}
+  if(taxRes&&!resYou.hitReliefCap&&headroom>500){const d=Math.min(8000,headroom,3000),save=taxResidentProgressive(resYou.chargeable)-taxResidentProgressive(Math.max(0,resYou.chargeable-d));if(save>10)cards.push({type:'topup',title:'CPF top-up opportunity — save ~$'+fmt(save),text:'A <strong>$'+fmt(d)+'</strong> cash top-up to your CPF SA/RA could save ~<strong>$'+fmt(save)+'</strong> in tax. Cap: $8,000/yr for self, $8,000/yr for family members.'});}
+
+  if(married&&resSpouse&&incomeSp>0){const sg2=gender==='F'?'M':'F',swapQ=[];
+    [0,50,100].forEach(pct=>{const rY=computePerson({income:incomeYou,age:ageYou,gender,citizenship:cit,taxResident:taxRes,disabledYou:el('disabledYou').checked,spouseIncome:spouseInc,spouseDisabled:spouseDis,married,childrenSorted:children,cutover,qcrShareYouFrac:pct/100,ptrShareYouFrac:ptrShare,parents,parentShareYouFrac:parentShare,gcr,srs:Number(el('srsYou').value)||0,topSelf:Number(el('cpfTopupSelf').value)||0,topFam:Number(el('cpfTopupFamily').value)||0,lifeIns:Number(el('lifeIns').value)||0,siblingDis:el('siblingDisability').checked,nsSelf:Number(el('nsmanSelf').value)||0,nsParent:el('nsmanParent').checked,nsWife:gender==='F'&&husbandNS&&cit==='SC',cpfOverride:el('cpfYouOverride').value,workingMother});const rS=computePerson({income:incomeSp,age:spouseAge,gender:sg2,citizenship:citSp,taxResident:taxRes,disabledYou:el('disabledSpousePerson').checked,spouseIncome:incomeYou,spouseDisabled:el('disabledYou').checked,married,childrenSorted:children,cutover,qcrShareYouFrac:1-pct/100,ptrShareYouFrac:1-ptrShare,parents,parentShareYouFrac:1-parentShare,gcr:false,srs:Number(el('srsSpouse').value)||0,topSelf:0,topFam:0,lifeIns:0,siblingDis:false,nsSelf:0,nsParent:false,nsWife:sg2==='F'&&husbandNS&&citSp==='SC',cpfOverride:el('cpfSpouseOverride').value,workingMother:married&&sg2==='F'&&incomeSp>0});swapQ.push({pct,house:rY.netTax+rS.netTax});});
+    const best=swapQ.reduce((a,b)=>a.house<b.house?a:b);
+    el('compareBlock').classList.remove('hidden');
+    el('compareGrid').innerHTML=swapQ.map(s=>'<div class="compare-card'+(s.pct===best.pct?' best':'')+'"><h4>You '+s.pct+'% QCR</h4><div class="cv">$'+fmt(s.house)+'</div></div>').join('');
+    cards.push({type:'compare',title:'Optimal QCR split',text:'Household tax is lowest at <strong>'+best.pct+'%</strong> QCR to you: combined <strong>$'+fmt(best.house)+'</strong>. Go to the Family step to adjust the QCR share.'});
+  }else{el('compareBlock').classList.add('hidden');}
+
+  const oc=el('optCards');oc.innerHTML='';
+  if(cards.length){oc.classList.remove('hidden');cards.forEach(c=>{const d=document.createElement('div');d.className='opt-card'+(c.type==='cap'?' cap-warn':'');d.innerHTML='<h4>'+(c.type==='cap'?'⚠ ':'💡 ')+c.title+'</h4><p>'+c.text+'</p>';oc.appendChild(d);});}else{oc.classList.add('hidden');}
+  el('configPreview').textContent=JSON.stringify(TAX_CONFIG,null,2);
+}
+
+// ============ COPY ============
+el('btnCopy').addEventListener('click',()=>{
+  const inc=Number(el('incomeYou').value)||0;
+  let txt='SG Income Tax Estimate (YA 2026)\n';txt+='================================\n';
+  const rows=el('reliefTableYou').querySelectorAll('tbody tr');
+  rows.forEach(tr=>{
+    const cells=tr.querySelectorAll('td');
+    if(cells.length===1){txt+='\n'+cells[0].textContent.replace(/\s+/g,' ').trim()+'\n';txt+='────────────────────────────\n';}
+    else if(cells.length===2){const label=cells[0].textContent.replace(/\s+/g,' ').trim(),val=cells[1].textContent.trim();txt+=label+': '+val+'\n';}
+  });
+  txt+='================================\n';txt+='Source: sg-income-tax-calculator v2\n';txt+='Disclaimer: Estimate only. Verify with IRAS.\n';
+  navigator.clipboard.writeText(txt).then(()=>{const t=el('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}).catch(()=>alert('Copy failed — try selecting the text manually.'));
+});
+
+// ============ INIT ============
+addChildRow();
+addParentRow();
+el('configPreview').textContent=JSON.stringify(TAX_CONFIG,null,2);
+renderProgress();
+updateStep();
+})();
+</script>
+</body>
+</html>
