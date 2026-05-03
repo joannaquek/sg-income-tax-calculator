@@ -8,7 +8,7 @@
 | **Microsoft Clarity** | Qualitative: session recordings, heatmaps, rage clicks | [clarity.microsoft.com](https://clarity.microsoft.com) |
 
 ### GA4 Property
-- **Measurement ID**: `G-8MFPSF1P8V`
+- **Measurement ID**: `G-ELPM2185P7` (Vercel stream, primary)
 - **Stream name**: Tax Calculator
 - **Stream URL**: `https://sg-income-tax-calculator.vercel.app/` (primary)
 - **GitHub Pages (backup)**: `https://joannaquek.github.io/sg-income-tax-calculator/`
