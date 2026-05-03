@@ -61,13 +61,26 @@ Older versions live in `archive/`. Only the latest version stays in the main fol
   - **Donation relief**: New field in Reliefs step for donations to approved IPCs. 250% tax deduction (separate from $80k relief cap). Includes tooltip, results table row, optimizer suggestion card.
 
 ### v2.4 — Analytics (GA4 + Clarity)
-- **File**: `sg-income-tax-calculator-v2.4.html` + `index.html` (symlink for GitHub Pages) *(current)*
+- **File**: `archive/sg-income-tax-calculator-v2.4.html`
 - **Date**: 3 May 2026
-- **Status**: Active (latest)
+- **Status**: Archived
 - **Changes**:
   - **Google Analytics 4**: Step funnel tracking, calculate_tax events (with income bracket, married status, children count, relief cap hit), theme toggle, copy summary, add child/parent.
   - **Microsoft Clarity**: Session recordings, heatmaps, rage click detection — no config needed beyond the script tag.
   - **Deployment**: GitHub Pages ready with `index.html` entry point.
+
+### v2.5 — IRAS Pre-Filled Statement PDF upload
+- **File**: `sg-income-tax-calculator-v2.5.html` / `index.html` *(current)*
+- **Date**: 3 May 2026
+- **Status**: Active (latest)
+- **Changes**:
+  - **PDF upload zone**: Drag-and-drop or click-to-upload before the stepper. Processes 100% client-side via PDF.js (lazily loaded, only when user triggers upload).
+  - **Document mockup tooltip**: Visual mini-replica of the IRAS Pre-Filled Income and Deduction Statement with redacted fields, plus step-by-step instructions to find it on myTax Portal.
+  - **Field extraction**: Parses Employment Income, CPF Relief, CPF Cash Top-up, Total Donations, number of qualifying children, and WMCR presence (to infer gender = Female).
+  - **Smart child handling**: Detects pre/post Jan 2024 birth year from WMCR amounts (old % rates vs new fixed rates), sets placeholder DOBs accordingly with a warning to update.
+  - **Success state**: Shows a card listing all extracted fields with values, YA note (e.g. "Pre-filled from YA 2025 — review for YA 2026"), and re-upload link.
+  - **GA4 event**: `pdf_prefill` tracks extraction success, fields found, children count, WMCR presence.
+  - **Privacy**: Prominent "processed locally, never uploaded" notice; PDF.js runs entirely in browser.
 
 ---
 
@@ -87,7 +100,8 @@ Older versions live in `archive/`. Only the latest version stays in the main fol
 | `archive/sg-income-tax-calculator-ya2026.html` | v1.0 | Archived |
 | `archive/sg-income-tax-calculator-v2.html` | v2.2 | Archived |
 | `archive/sg-income-tax-calculator-v2.3.html` | v2.3 | Archived |
-| `sg-income-tax-calculator-v2.4.html` / `index.html` | v2.4 | Active (latest) |
+| `archive/sg-income-tax-calculator-v2.4.html` | v2.4 | Archived |
+| `sg-income-tax-calculator-v2.5.html` / `index.html` | v2.5 | Active (latest) |
 | `PHASE2_SINGPASS.md` | — | Spec for v3.0 |
 | `VERSION.md` | — | This file |
 | `.design/sg-tax-calculator/` | — | Design artifacts (brief, IA, tokens, tasks, review) |
