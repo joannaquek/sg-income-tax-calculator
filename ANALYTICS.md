@@ -10,7 +10,8 @@
 ### GA4 Property
 - **Measurement ID**: `G-8MFPSF1P8V`
 - **Stream name**: Tax Calculator
-- **Stream URL**: `https://joannaquek.github.io/sg-income-tax-calculator/`
+- **Stream URL**: `https://sg-income-tax-calculator.vercel.app/` (primary)
+- **GitHub Pages (backup)**: `https://joannaquek.github.io/sg-income-tax-calculator/`
 
 ### Microsoft Clarity
 - **Project name**: SG Tax Calculator
