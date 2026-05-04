@@ -137,6 +137,10 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:var(--color-accent-pr
 .collapsible-trigger.open .chevron{transform:rotate(90deg)}
 .collapsible-body{overflow:hidden;max-height:0;transition:max-height var(--dur-slow) var(--ease);opacity:0}
 .collapsible-body.open{max-height:800px;opacity:1;transition:max-height var(--dur-slow) var(--ease),opacity var(--dur-normal) var(--ease)}
+.family-opt-hint{font-size:var(--fs-sm);color:var(--color-text-secondary);margin-bottom:var(--space-5);line-height:var(--lh-relaxed)}
+.family-layers{border:1px solid var(--color-border-secondary);border-radius:var(--radius-md);padding:var(--space-6);margin-bottom:var(--space-6);background:var(--color-bg-primary)}
+.family-layer-block{margin-top:var(--space-6);padding-top:var(--space-6);border-top:1px solid var(--color-border-secondary)}
+.family-layer-block:first-of-type{margin-top:0;padding-top:0;border-top:none}
 
 /* ================================================================
    LIVE PREVIEW
@@ -531,10 +535,22 @@ input.invalid{border-color:var(--color-status-error)!important;}
   <!-- ============ STEP 1: FAMILY ============ -->
   <section class="card step-panel hidden" data-step="1">
     <h2>Family &amp; dependants</h2>
-    <div class="chk-row" style="margin-bottom:var(--space-6)">
-      <input type="checkbox" id="married">
-      <label for="married" style="font-weight:var(--fw-semi)">I am married</label>
+    <p class="family-opt-hint">Turn this on only if you need spouse, child, or parent reliefs. Everyone else can skip to Reliefs.</p>
+    <div class="chk-row" style="margin-bottom:var(--space-5)">
+      <input type="checkbox" id="familyOptIn">
+      <label for="familyOptIn" style="font-weight:var(--fw-semi)">I have a spouse or dependants to declare</label>
     </div>
+    <div id="familyLayersCard" class="family-layers hidden">
+      <p class="section-heading" style="margin-bottom:var(--space-5)">What applies to you? <span class="hint">(select any combination)</span></p>
+      <div class="chk-row"><input type="checkbox" id="layerSpouse"><label for="layerSpouse">Spouse / marriage <span class="hint">(spouse relief, NSman wife, shared QCR/PTR)</span></label></div>
+      <div class="chk-row"><input type="checkbox" id="layerChildren"><label for="layerChildren">Qualifying children <span class="hint">(QCR, WMCR, PTR)</span></label></div>
+      <div class="chk-row" style="margin-bottom:0"><input type="checkbox" id="layerParents"><label for="layerParents">Parents or grandparents I support <span class="hint">(parent relief)</span></label></div>
+
+    <div id="spouseLayerWrap" class="family-layer-block hidden">
+      <div class="chk-row" style="margin-bottom:var(--space-5)">
+        <input type="checkbox" id="married">
+        <label for="married" style="font-weight:var(--fw-semi)">I am married</label>
+      </div>
     <div id="spouseSection" class="hidden">
       <h3 class="section-heading">Spouse</h3>
       <div class="grid-2">
@@ -556,28 +572,38 @@ input.invalid{border-color:var(--color-status-error)!important;}
       </div>
       <hr class="divider">
     </div>
+    </div>
 
+    <div id="childrenLayerWrap" class="family-layer-block hidden">
     <h3 class="section-heading">Children</h3>
     <p class="section-desc">Qualifying children: unmarried, under 16, or student under 25, or serving full-time NS.</p>
     <div id="childrenContainer"></div>
     <button type="button" class="btn-add" id="addChild">+ Add child</button>
+    </div>
 
-    <hr class="divider">
+    <div id="parentsLayerWrap" class="family-layer-block hidden">
     <h3 class="section-heading">Parents / grandparents <span class="hint">(max 2 dependants)</span></h3>
     <div id="parentsContainer"></div>
     <button type="button" class="btn-add" id="addParent">+ Add dependant</button>
+    </div>
 
     <hr class="divider">
     <div id="sharingControls" class="hidden">
-      <h3 class="section-heading">Relief sharing with spouse</h3>
-      <div class="grid-2">
-        <div class="field"><label>Your QCR share (%) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Qualifying Child Relief can be split between spouses. 100% = you claim all. 50% = split equally. The optimizer on the Results tab will suggest the best split.</span></span></label><input type="number" id="qcrShareYou" min="0" max="100" value="50" step="5"></div>
-        <div class="field"><label>Your PTR share (%) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Parenthood Tax Rebate is a tax rebate (not relief) of $5k/$10k/$20k per child (SC only). It can be shared between spouses in any proportion.</span></span></label><input type="number" id="ptrShareYou" min="0" max="100" value="50" step="5"></div>
+      <h3 class="section-heading">Relief sharing</h3>
+      <div id="shareQcrPtrBlock" class="hidden">
+        <p class="section-desc" style="margin-bottom:var(--space-4)">Split with your spouse (married filing).</p>
+        <div class="grid-2">
+          <div class="field"><label>Your QCR share (%) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Qualifying Child Relief can be split between spouses. 100% = you claim all. 50% = split equally. The optimizer on the Results tab will suggest the best split.</span></span></label><input type="number" id="qcrShareYou" min="0" max="100" value="50" step="5"></div>
+          <div class="field"><label>Your PTR share (%) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Parenthood Tax Rebate is a tax rebate (not relief) of $5k/$10k/$20k per child (SC only). It can be shared between spouses in any proportion.</span></span></label><input type="number" id="ptrShareYou" min="0" max="100" value="50" step="5"></div>
+        </div>
+      </div>
+      <div id="shareParentBlock" class="hidden" style="margin-top:var(--space-5)">
         <div class="field"><label>Your Parent Relief share (%) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">Parent/Grandparent Relief can be shared with siblings or spouse. 100% = you claim the full amount. Only one person can claim each parent.</span></span></label><input type="number" id="parentShareYou" min="0" max="100" value="100" step="5"></div>
       </div>
     </div>
     <div id="gcrWrap" class="hidden">
       <div class="chk-row"><input type="checkbox" id="gcrEligible"><label for="gcrEligible">Grandparent Caregiver Relief ($3,000) <span class="tip-wrap"><i class="tip-icon" tabindex="0">?</i><span class="tip-bubble">For married working mothers whose parent/grandparent/in-law cares for their child (aged 12 or under). $3,000 relief. Only one married couple can claim per household.</span></span></label></div>
+    </div>
     </div>
   </section>
 
@@ -736,6 +762,9 @@ function applyPrefill(data){
   if(data.donations){el('donations').value=data.donations;}
   if(data.hasWMCR){el('genderYou').value='F';updateGcrVisibility();}
   if(data.numChildren>0){
+    el('familyOptIn').checked=true;
+    el('layerChildren').checked=true;
+    syncFamilyUI();
     el('childrenContainer').innerHTML='';
     childCount=0;
     for(let i=0;i<data.numChildren;i++){
@@ -774,7 +803,7 @@ function setUploadState(state,data){
     if(data.numChildren)html+=`<li><span class="prefill-key">Qualifying children</span><span class="prefill-val">${data.numChildren}</span></li>`;
     if(data.hasWMCR)html+=`<li><span class="prefill-key">Gender auto-set to</span><span class="prefill-val">Female (WMCR detected)</span></li>`;
     html+='</ul>';
-    if(data.numChildren>0)html+=`<p class="prefill-warn">⚠ Child dates of birth set to placeholder dates — please update them in Step 2 for accurate WMCR amounts.</p>`;
+    if(data.numChildren>0)html+=`<p class="prefill-warn">⚠ Child dates of birth set to placeholder dates — please update them under Family for accurate WMCR amounts.</p>`;
     html+=`<p class="prefill-note">Review all fields before calculating. Data stays on your device.</p>`;
     el('uploadSuccessBody').innerHTML=html;
   }
@@ -832,6 +861,27 @@ const TAX_CONFIG={meta:{yearOfAssessment:2026,basisYear:2025},reliefCap:80000,in
 
 const el=id=>document.getElementById(id);
 const fmt=n=>(Math.round(n*100)/100).toLocaleString('en-SG',{minimumFractionDigits:0,maximumFractionDigits:2});
+function familyOptInOn(){return el('familyOptIn').checked;}
+function layerSpouseOn(){return el('layerSpouse').checked;}
+function layerChildrenOn(){return el('layerChildren').checked;}
+function layerParentsOn(){return el('layerParents').checked;}
+function effectiveMarried(){return familyOptInOn()&&layerSpouseOn()&&el('married').checked;}
+function childrenForTax(){return familyOptInOn()&&layerChildrenOn()?parseChildren():[];}
+function parentsForTax(){return familyOptInOn()&&layerParentsOn()?parseParents():[];}
+function syncFamilyUI(){
+  const opt=familyOptInOn();
+  el('familyLayersCard').classList.toggle('hidden',!opt);
+  el('spouseLayerWrap').classList.toggle('hidden',!opt||!layerSpouseOn());
+  el('childrenLayerWrap').classList.toggle('hidden',!opt||!layerChildrenOn());
+  el('parentsLayerWrap').classList.toggle('hidden',!opt||!layerParentsOn());
+  const showSpouseFields=opt&&layerSpouseOn()&&el('married').checked;
+  el('spouseSection').classList.toggle('hidden',!showSpouseFields);
+  const shareQcr=effectiveMarried()&&layerChildrenOn();
+  el('shareQcrPtrBlock').classList.toggle('hidden',!shareQcr);
+  el('shareParentBlock').classList.toggle('hidden',!(opt&&layerParentsOn()));
+  el('sharingControls').classList.toggle('hidden',!shareQcr&&!(opt&&layerParentsOn()));
+  updateGcrVisibility();
+}
 
 function taxResidentProgressive(c){let r=Math.max(0,c),t=0;for(const b of TAX_CONFIG.progressiveTax.bands){if(r<=0)break;const s=b.upto===Infinity?r:Math.min(r,b.upto);t+=s*b.rate;r-=s;}return t;}
 function taxNonResidentEmployment(e){return Math.max(TAX_CONFIG.nonResidentEmploymentFlat*e,taxResidentProgressive(e));}
@@ -926,17 +976,15 @@ el('btnBack').addEventListener('click',()=>{if(currentStep>0){currentStep--;upda
 el('btnNext').addEventListener('click',()=>{if(currentStep<STEPS.length-1){currentStep++;updateStep();}else{runResults();}});
 
 // ============ CONDITIONAL VISIBILITY ============
-el('married').addEventListener('change',()=>{
-  const m=el('married').checked;
-  el('spouseSection').classList.toggle('hidden',!m);
-  el('sharingControls').classList.toggle('hidden',!m);
-  updateGcrVisibility();
-  track('married_toggle',{married:m});
-});
 function updateGcrVisibility(){
-  const show=el('married').checked&&el('genderYou').value==='F'&&readIncome()>0;
+  const show=familyOptInOn()&&layerSpouseOn()&&el('married').checked&&el('genderYou').value==='F'&&readIncome()>0;
   el('gcrWrap').classList.toggle('hidden',!show);
 }
+el('married').addEventListener('change',()=>{syncFamilyUI();track('married_toggle',{married:el('married').checked});});
+el('familyOptIn').addEventListener('change',()=>{syncFamilyUI();track('family_opt_in',{on:el('familyOptIn').checked});});
+['layerSpouse','layerChildren','layerParents'].forEach(id=>{
+  el(id).addEventListener('change',()=>{syncFamilyUI();track('family_layer_toggle',{layer:id,on:el(id).checked});});
+});
 el('genderYou').addEventListener('change',updateGcrVisibility);
 
 // ============ LIVE PREVIEW ============
@@ -949,6 +997,7 @@ function updateLivePreview(){
   const chargeable=Math.max(0,inc-cpfEst-eir);
   const tax=el('taxResident').checked?taxResidentProgressive(chargeable):(cit==='FR'?taxNonResidentEmployment(inc):taxResidentProgressive(inc));
   el('liveEstimate').textContent='~ $'+fmt(tax);
+  try{updateGcrVisibility();}catch(e){}
 }
 ['incomeYou','ageYou','citizenYou','taxResident'].forEach(id=>{el(id).addEventListener('input',updateLivePreview);el(id).addEventListener('change',updateLivePreview);});
 updateLivePreview();
@@ -965,24 +1014,24 @@ document.querySelectorAll('.collapsible-trigger').forEach(trigger=>{trigger.addE
 
 // ============ RELIEFS STEP — auto display ============
 function updateReliefsStep(){
-  const inc=readIncome(),age=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,married=el('married').checked,spouseInc=Number(el('spouseIncome').value)||0,spouseDis=el('spouseDisabled').checked,husbandNS=el('husbandNSmanEligible').checked;
+  const inc=readIncome(),age=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,married=effectiveMarried(),spouseInc=Number(el('spouseIncome').value)||0,spouseDis=el('spouseDisabled').checked,husbandNS=el('husbandNSmanEligible').checked;
   const auto=[];
   auto.push({name:'Earned Income Relief',val:earnedIncomeReliefAmount(age,el('disabledYou').checked,inc)});
   auto.push({name:'CPF Relief (employee)',val:estimateCpfEmployeeRelief(inc,age,cit,el('cpfYouOverride').value)});
   if(married&&spouseInc<=TAX_CONFIG.incomeThreshold.spouseParentDependant)auto.push({name:'Spouse Relief',val:spouseDis?TAX_CONFIG.spouseRelief.disability:TAX_CONFIG.spouseRelief.normal});
-  const children=parseChildren();if(children.length){const{qcrPerChild,wmcrPerChild}=childOrderWMCRAmount(children,inc,TAX_CONFIG.wmcrCutoverDate);const qShare=(Number(el('qcrShareYou').value)||50)/100;let qcr=0;children.forEach((_,i)=>qcr+=qcrPerChild[i]*qShare);auto.push({name:'Qualifying Child Relief',val:Math.round(qcr*100)/100});const wm=married&&gender==='F'&&inc>0;if(wm){let wmcr=0;children.forEach((c,i)=>{if(c.sgCitizen)wmcr+=wmcrPerChild[i];});if(wmcr>0)auto.push({name:"Working Mother's Child Relief",val:Math.round(wmcr*100)/100});}}
-  const parents=parseParents();if(parents.length){let pt=0;parents.forEach(p=>{if(p.disability){pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.disability:TAX_CONFIG.parentRelief.apart.disability;}else{if(p.income>TAX_CONFIG.incomeThreshold.spouseParentDependant||p.age<TAX_CONFIG.parentRelief.minAge)return;pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.normal:TAX_CONFIG.parentRelief.apart.normal;}});const ps=(Number(el('parentShareYou').value)||100)/100;if(pt>0)auto.push({name:'Parent Relief',val:Math.round(pt*ps*100)/100});}
+  const children=childrenForTax();if(children.length){const{qcrPerChild,wmcrPerChild}=childOrderWMCRAmount(children,inc,TAX_CONFIG.wmcrCutoverDate);const qShare=(Number(el('qcrShareYou').value)||50)/100;let qcr=0;children.forEach((_,i)=>qcr+=qcrPerChild[i]*qShare);auto.push({name:'Qualifying Child Relief',val:Math.round(qcr*100)/100});const wm=married&&gender==='F'&&inc>0;if(wm){let wmcr=0;children.forEach((c,i)=>{if(c.sgCitizen)wmcr+=wmcrPerChild[i];});if(wmcr>0)auto.push({name:"Working Mother's Child Relief",val:Math.round(wmcr*100)/100});}}
+  const parents=parentsForTax();if(parents.length){let pt=0;parents.forEach(p=>{if(p.disability){pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.disability:TAX_CONFIG.parentRelief.apart.disability;}else{if(p.income>TAX_CONFIG.incomeThreshold.spouseParentDependant||p.age<TAX_CONFIG.parentRelief.minAge)return;pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.normal:TAX_CONFIG.parentRelief.apart.normal;}});const ps=(Number(el('parentShareYou').value)||100)/100;if(pt>0)auto.push({name:'Parent Relief',val:Math.round(pt*ps*100)/100});}
   if(el('gcrEligible').checked&&married&&gender==='F'&&inc>0)auto.push({name:'Grandparent Caregiver',val:TAX_CONFIG.grandparentCaregiver});
   if(gender==='F'&&husbandNS&&cit==='SC')auto.push({name:'NSman (Wife) Relief',val:TAX_CONFIG.nsman.wife});
   const ar=el('autoReliefs');ar.innerHTML='';auto.filter(a=>a.val>0).forEach(a=>{const d=document.createElement('div');d.className='auto-relief-item';d.innerHTML='<span class="ar-name"><span class="ar-check">✓</span> '+a.name+'</span><span class="ar-val">$'+fmt(a.val)+'</span>';ar.appendChild(d);});
   updateCapBar();
 }
 function updateCapBar(){
-  const inc=readIncome(),age=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,married=el('married').checked;
+  const inc=readIncome(),age=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,married=effectiveMarried();
   let total=earnedIncomeReliefAmount(age,el('disabledYou').checked,inc)+estimateCpfEmployeeRelief(inc,age,cit,el('cpfYouOverride').value);
   if(married&&(Number(el('spouseIncome').value)||0)<=TAX_CONFIG.incomeThreshold.spouseParentDependant)total+=(el('spouseDisabled').checked?TAX_CONFIG.spouseRelief.disability:TAX_CONFIG.spouseRelief.normal);
-  const children=parseChildren();if(children.length){const{qcrPerChild,wmcrPerChild}=childOrderWMCRAmount(children,inc,TAX_CONFIG.wmcrCutoverDate);const qShare=(Number(el('qcrShareYou').value)||50)/100;children.forEach((_,i)=>{total+=qcrPerChild[i]*qShare;});if(married&&gender==='F'&&inc>0)children.forEach((c,i)=>{if(c.sgCitizen)total+=wmcrPerChild[i];});}
-  const parents=parseParents();if(parents.length){let pt=0;parents.forEach(p=>{if(p.disability){pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.disability:TAX_CONFIG.parentRelief.apart.disability;}else{if(p.income>TAX_CONFIG.incomeThreshold.spouseParentDependant||p.age<TAX_CONFIG.parentRelief.minAge)return;pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.normal:TAX_CONFIG.parentRelief.apart.normal;}});total+=pt*((Number(el('parentShareYou').value)||100)/100);}
+  const children=childrenForTax();if(children.length){const{qcrPerChild,wmcrPerChild}=childOrderWMCRAmount(children,inc,TAX_CONFIG.wmcrCutoverDate);const qShare=(Number(el('qcrShareYou').value)||50)/100;children.forEach((_,i)=>{total+=qcrPerChild[i]*qShare;});if(married&&gender==='F'&&inc>0)children.forEach((c,i)=>{if(c.sgCitizen)total+=wmcrPerChild[i];});}
+  const parents=parentsForTax();if(parents.length){let pt=0;parents.forEach(p=>{if(p.disability){pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.disability:TAX_CONFIG.parentRelief.apart.disability;}else{if(p.income>TAX_CONFIG.incomeThreshold.spouseParentDependant||p.age<TAX_CONFIG.parentRelief.minAge)return;pt+=p.livingTogether?TAX_CONFIG.parentRelief.together.normal:TAX_CONFIG.parentRelief.apart.normal;}});total+=pt*((Number(el('parentShareYou').value)||100)/100);}
   if(el('gcrEligible').checked&&married&&gender==='F'&&inc>0)total+=TAX_CONFIG.grandparentCaregiver;
   if(gender==='F'&&el('husbandNSmanEligible').checked&&cit==='SC')total+=TAX_CONFIG.nsman.wife;
   total+=capSRS(Number(el('srsYou').value)||0,cit);
@@ -1020,8 +1069,8 @@ function fillTable(tid,result){
 }
 
 function computePersonFromFormOverrides(overrides){
-  const incomeYou=readIncome(),ageYou=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,taxRes=el('taxResident').checked,married=el('married').checked,spouseInc=Number(el('spouseIncome').value)||0,spouseDis=el('spouseDisabled').checked,husbandNS=el('husbandNSmanEligible').checked;
-  const children=parseChildren(),cutover=TAX_CONFIG.wmcrCutoverDate,qcrShare=(Number(el('qcrShareYou').value)||50)/100,ptrShare=(Number(el('ptrShareYou').value)||50)/100,parents=parseParents(),parentShare=(Number(el('parentShareYou').value)||100)/100;
+  const incomeYou=readIncome(),ageYou=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,taxRes=el('taxResident').checked,married=effectiveMarried(),spouseInc=Number(el('spouseIncome').value)||0,spouseDis=el('spouseDisabled').checked,husbandNS=el('husbandNSmanEligible').checked;
+  const children=childrenForTax(),cutover=TAX_CONFIG.wmcrCutoverDate,qcrShare=(Number(el('qcrShareYou').value)||50)/100,ptrShare=(Number(el('ptrShareYou').value)||50)/100,parents=parentsForTax(),parentShare=(Number(el('parentShareYou').value)||100)/100;
   const gcr=el('gcrEligible').checked&&married&&gender==='F'&&incomeYou>0,workingMother=married&&gender==='F'&&incomeYou>0;
   const base={income:incomeYou,age:ageYou,gender,citizenship:cit,taxResident:taxRes,disabledYou:el('disabledYou').checked,spouseIncome:married?spouseInc:999999,spouseDisabled:spouseDis,married,childrenSorted:children,cutover,qcrShareYouFrac:qcrShare,ptrShareYouFrac:ptrShare,parents,parentShareYouFrac:parentShare,gcr,srs:Number(el('srsYou').value)||0,topSelf:Number(el('cpfTopupSelf').value)||0,topFam:Number(el('cpfTopupFamily').value)||0,lifeIns:Number(el('lifeIns').value)||0,siblingDis:el('siblingDisability').checked,nsSelf:Number(el('nsmanSelf').value)||0,nsParent:el('nsmanParent').checked,nsWife:gender==='F'&&husbandNS&&cit==='SC',cpfOverride:el('cpfYouOverride').value,workingMother,donations:Number(el('donations').value)||0};
   return computePerson(Object.assign({},base,overrides));
@@ -1162,8 +1211,8 @@ function renderSimulatorCharts(resYou){
 }
 
 function runResults(){
-  const incomeYou=readIncome(),ageYou=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,taxRes=el('taxResident').checked,married=el('married').checked,spouseInc=Number(el('spouseIncome').value)||0,spouseDis=el('spouseDisabled').checked,husbandNS=el('husbandNSmanEligible').checked;
-  const children=parseChildren(),cutover=TAX_CONFIG.wmcrCutoverDate,qcrShare=(Number(el('qcrShareYou').value)||50)/100,ptrShare=(Number(el('ptrShareYou').value)||50)/100,parents=parseParents(),parentShare=(Number(el('parentShareYou').value)||100)/100;
+  const incomeYou=readIncome(),ageYou=Number(el('ageYou').value)||35,cit=el('citizenYou').value,gender=el('genderYou').value,taxRes=el('taxResident').checked,married=effectiveMarried(),spouseInc=Number(el('spouseIncome').value)||0,spouseDis=el('spouseDisabled').checked,husbandNS=el('husbandNSmanEligible').checked;
+  const children=childrenForTax(),cutover=TAX_CONFIG.wmcrCutoverDate,qcrShare=(Number(el('qcrShareYou').value)||50)/100,ptrShare=(Number(el('ptrShareYou').value)||50)/100,parents=parentsForTax(),parentShare=(Number(el('parentShareYou').value)||100)/100;
   const gcr=el('gcrEligible').checked&&married&&gender==='F'&&incomeYou>0,workingMother=married&&gender==='F'&&incomeYou>0;
   const donationsYou=Number(el('donations').value)||0;
   const resYou=computePerson({income:incomeYou,age:ageYou,gender,citizenship:cit,taxResident:taxRes,disabledYou:el('disabledYou').checked,spouseIncome:married?spouseInc:999999,spouseDisabled:spouseDis,married,childrenSorted:children,cutover,qcrShareYouFrac:qcrShare,ptrShareYouFrac:ptrShare,parents,parentShareYouFrac:parentShare,gcr,srs:Number(el('srsYou').value)||0,topSelf:Number(el('cpfTopupSelf').value)||0,topFam:Number(el('cpfTopupFamily').value)||0,lifeIns:Number(el('lifeIns').value)||0,siblingDis:el('siblingDisability').checked,nsSelf:Number(el('nsmanSelf').value)||0,nsParent:el('nsmanParent').checked,nsWife:gender==='F'&&husbandNS&&cit==='SC',cpfOverride:el('cpfYouOverride').value,workingMother,donations:donationsYou});
@@ -1171,7 +1220,7 @@ function runResults(){
   const heroEl=el('netTaxYou');heroEl.textContent='$'+fmt(resYou.netTax);heroEl.className='rh-value'+(resYou.netTax<=200?' low':'');
   fillTable('reliefTableYou',resYou);
   const bracket=incomeYou>=320000?'320k+':incomeYou>=160000?'160-320k':incomeYou>=80000?'80-160k':incomeYou>=40000?'40-80k':'<40k';
-  track('calculate_tax',{income_bracket:bracket,net_tax:Math.round(resYou.netTax),married,children_count:children.length,relief_cap_hit:resYou.hitReliefCap,donations:donationsYou>0});
+  track('calculate_tax',{income_bracket:bracket,net_tax:Math.round(resYou.netTax),married,family_opt_in:familyOptInOn(),children_count:children.length,relief_cap_hit:resYou.hitReliefCap,donations:donationsYou>0});
 
   const incomeSp=Number(el('incomeSpouse').value)||0,spouseAge=Number(el('spouseAge').value)||35,citSp=cit;
   let resSpouse=null;
@@ -1195,7 +1244,7 @@ function runResults(){
   if(taxRes&&!resYou.hitReliefCap&&headroom>500){const d=Math.min(8000,headroom,3000),save=taxResidentProgressive(resYou.chargeable)-taxResidentProgressive(Math.max(0,resYou.chargeable-d));if(save>10)cards.push({type:'topup',title:'CPF top-up opportunity — save ~$'+fmt(save),text:'A <strong>$'+fmt(d)+'</strong> cash top-up to your CPF SA/RA could save ~<strong>$'+fmt(save)+'</strong> in tax. Cap: $8,000/yr for self, $8,000/yr for family members.'});}
   if(taxRes&&donationsYou===0&&resYou.chargeable>0){const donEx=1000,donDed=donEx*TAX_CONFIG.donationMultiplier,donSave=taxResidentProgressive(resYou.chargeable)-taxResidentProgressive(Math.max(0,resYou.chargeable-donDed));if(donSave>5)cards.push({type:'donation',title:'Donation tax relief — 250% deduction',text:'Donations to approved IPCs (Institutions of a Public Character) qualify for <strong>250%</strong> tax deduction. A <strong>$'+fmt(donEx)+'</strong> donation gives <strong>$'+fmt(donDed)+'</strong> in deductions, saving ~<strong>$'+fmt(donSave)+'</strong> in tax. No cap — and separate from the $80k relief ceiling.'});}
 
-  if(married&&resSpouse&&incomeSp>0){const sg2=gender==='F'?'M':'F',swapQ=[];
+  if(married&&children.length&&resSpouse&&incomeSp>0){const sg2=gender==='F'?'M':'F',swapQ=[];
     [0,50,100].forEach(pct=>{const rY=computePerson({income:incomeYou,age:ageYou,gender,citizenship:cit,taxResident:taxRes,disabledYou:el('disabledYou').checked,spouseIncome:spouseInc,spouseDisabled:spouseDis,married,childrenSorted:children,cutover,qcrShareYouFrac:pct/100,ptrShareYouFrac:ptrShare,parents,parentShareYouFrac:parentShare,gcr,srs:Number(el('srsYou').value)||0,topSelf:Number(el('cpfTopupSelf').value)||0,topFam:Number(el('cpfTopupFamily').value)||0,lifeIns:Number(el('lifeIns').value)||0,siblingDis:el('siblingDisability').checked,nsSelf:Number(el('nsmanSelf').value)||0,nsParent:el('nsmanParent').checked,nsWife:gender==='F'&&husbandNS&&cit==='SC',cpfOverride:el('cpfYouOverride').value,workingMother,donations:donationsYou});const rS=computePerson({income:incomeSp,age:spouseAge,gender:sg2,citizenship:citSp,taxResident:taxRes,disabledYou:el('disabledSpousePerson').checked,spouseIncome:incomeYou,spouseDisabled:el('disabledYou').checked,married,childrenSorted:children,cutover,qcrShareYouFrac:1-pct/100,ptrShareYouFrac:1-ptrShare,parents,parentShareYouFrac:1-parentShare,gcr:false,srs:Number(el('srsSpouse').value)||0,topSelf:0,topFam:0,lifeIns:0,siblingDis:false,nsSelf:0,nsParent:false,nsWife:sg2==='F'&&husbandNS&&citSp==='SC',cpfOverride:el('cpfSpouseOverride').value,workingMother:married&&sg2==='F'&&incomeSp>0,donations:0});swapQ.push({pct,house:rY.netTax+rS.netTax});});
     const best=swapQ.reduce((a,b)=>a.house<b.house?a:b);
     el('compareBlock').classList.remove('hidden');
@@ -1224,8 +1273,7 @@ el('btnCopy').addEventListener('click',()=>{
 });
 
 // ============ INIT ============
-addChildRow();
-addParentRow();
+syncFamilyUI();
 el('configPreview').textContent=JSON.stringify(TAX_CONFIG,null,2);
 renderProgress();
 updateStep();
