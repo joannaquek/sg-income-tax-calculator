@@ -5,6 +5,7 @@
 | Tool | Purpose | Dashboard |
 |------|---------|-----------|
 | **Google Analytics 4** | Quantitative: user counts, funnel drop-off, event frequency | [analytics.google.com](https://analytics.google.com) |
+| **Vercel Web Analytics** | Page views / visitors on the Vercel deployment (no npm for static HTML) | [Vercel project → Analytics](https://vercel.com/docs/analytics/quickstart) |
 | **Microsoft Clarity** | Qualitative: session recordings, heatmaps, rage clicks | [clarity.microsoft.com](https://clarity.microsoft.com) |
 
 ### GA4 Property
@@ -16,6 +17,11 @@
 ### Microsoft Clarity
 - **Project name**: SG Tax Calculator
 - **Project ID**: `wl75letgzu`
+
+### Vercel Web Analytics
+1. In [Vercel](https://vercel.com/dashboard) open **sg-income-tax-calculator** → **Analytics** (or Speed Insights / Web Analytics card) → **Enable** Web Analytics for the project.
+2. **Redeploy** after enabling (empty dashboard + `script.js` 404 until you do — see [troubleshooting](https://vercel.com/docs/analytics/troubleshooting)).
+3. The site uses the **plain HTML** snippet from the [quickstart](https://vercel.com/docs/analytics/quickstart) (not `@vercel/analytics` / Next.js): `window.va` + `<script defer src="/_vercel/insights/script.js">`. That path only exists on **Vercel** deployments; GitHub Pages mirror may get a harmless 404 for that script.
 
 ---
 

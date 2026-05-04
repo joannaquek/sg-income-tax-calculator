@@ -53,6 +53,7 @@ A self-contained single-file HTML tax calculator for Singapore YA 2026 (income e
 | Family step progressive disclosure | ✅ Done | Opt-in + layers (spouse / children / parents); sharing UI split QCR/PTR vs parent % |
 | GA4 analytics | ✅ Done | Measurement ID: G-ELPM2185P7 (gtag.js in `<head>`) |
 | GA4 Data API script (local) | ✅ Done | `scripts/ga4_page_views.py` — optional; not part of deployed site |
+| Vercel Web Analytics | ✅ Done | `/_vercel/insights/script.js` + `window.va` in HTML; enable in Vercel → Analytics then redeploy |
 | Microsoft Clarity | ✅ Done | Project ID: wl75letgzu |
 | GitHub Pages deployment | ✅ Done | Auto-deploys on push |
 | Vercel deployment | ✅ Done | Auto-deploys on push, ~30s |
