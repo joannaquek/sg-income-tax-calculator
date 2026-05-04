@@ -635,15 +635,15 @@ input.invalid{border-color:var(--color-status-error)!important;}
       <hr class="divider">
       <div class="tax-simulator-head">
         <h3 class="section-heading">Top-up simulator</h3>
-        <p class="section-desc">See how <strong>additional</strong> SRS, CPF cash top-ups (within annual caps), and qualifying IPC donations affect your <strong>estimated net tax</strong>. Curves start from your entries on the Reliefs step — scroll horizontally on small screens.</p>
+        <p class="section-desc">Charts plot <strong>estimated net tax payable on the horizontal axis</strong> and <strong>top-up amount on the vertical axis</strong>, so each point shows the pair (tax outcome, contribution level). Applies on top of what you entered on the Reliefs step — scroll charts sideways on small screens.</p>
       </div>
       <div id="simChartVoluntaryWrap" class="sim-chart-wrap hidden">
-        <svg id="chartVoluntary" width="600" height="260" viewBox="0 0 600 260" aria-label="Chart of net tax versus extra SRS and CPF voluntary reliefs"></svg>
+        <svg id="chartVoluntary" width="600" height="260" viewBox="0 0 600 260" aria-label="Net tax payable on horizontal axis, voluntary SRS and CPF top-up amount on vertical axis"></svg>
       </div>
       <p id="simChartVoluntaryNote" class="sim-chart-note hidden"></p>
       <div id="simLegendVoluntary" class="sim-legend hidden"></div>
       <div id="simChartDonWrap" class="sim-chart-wrap hidden" style="margin-top:var(--space-6)">
-        <svg id="chartDonation" width="600" height="220" viewBox="0 0 600 220" aria-label="Chart of net tax versus additional cash donations"></svg>
+        <svg id="chartDonation" width="600" height="220" viewBox="0 0 600 220" aria-label="Net tax payable on horizontal axis, additional IPC donation on vertical axis"></svg>
       </div>
       <p id="simChartDonNote" class="sim-chart-note hidden"></p>
       <div id="simLegendDon" class="sim-legend hidden"></div>
@@ -1023,17 +1023,21 @@ function allocateExtraVoluntary(delta,srs0,t0,f0,srsCap,selfCap,famCap){
   const addF=Math.min(rem,Math.max(0,famCap-f));f+=addF;
   return{srs:s,topSelf:t,topFam:f};
 }
-function drawLineChart(svgEl,points,xLabel,chartTitle){
-  const W=+svgEl.getAttribute('width')||600,H=+svgEl.getAttribute('height')||260,padL=58,padR=20,padT=30,padB=54,iw=W-padL-padR,ih=H-padT-padB;
+function drawLineChart(svgEl,points,xLabel,chartTitle,yAxisLabel){
+  const W=+svgEl.getAttribute('width')||600,H=+svgEl.getAttribute('height')||260,padL=62,padR=20,padT=30,padB=54,iw=W-padL-padR,ih=H-padT-padB;
   if(!points.length)return;
+  yAxisLabel=yAxisLabel||'Top-up (S$)';
   const xs=points.map(p=>p.x),ys=points.map(p=>p.y);
-  const xMin=xs[0],xMax=xs[xs.length-1]||1;
+  let xLo=Math.min(...xs),xHi=Math.max(...xs);
+  const xPad=Math.max((xHi-xLo)*0.03,100);
+  const xMin=Math.max(0,xLo-xPad),xMax=xHi+xPad;
   const yLo=Math.min(...ys),yHi=Math.max(...ys);
-  const yPad=Math.max((yHi-yLo)*0.12,50);
-  const yMin=Math.max(0,yLo-yPad),yMax=yHi+yPad;
+  const yPad=Math.max((yHi-yLo)*0.08, yHi*0.05, 200);
+  const yMin=Math.max(0,yLo-yPad*0.02),yMax=yHi+yPad;
   const sx=x=>padL+(xMax>xMin?(x-xMin)/(xMax-xMin):0)*iw;
   const sy=y=>padT+ih-(yMax>yMin?(y-yMin)/(yMax-yMin):0.5)*ih;
-  const d=points.map((p,i)=>(i?'L':'M')+sx(p.x).toFixed(1)+','+sy(p.y).toFixed(1)).join(' ');
+  const sorted=[...points].sort((a,b)=>a.x-b.x);
+  const d=sorted.map((p,i)=>(i?'L':'M')+sx(p.x).toFixed(1)+','+sy(p.y).toFixed(1)).join(' ');
   const fmtAxis=n=>'$'+fmt(n);
   let parts=[];
   parts.push('<text class="chart-title" x="'+(W/2)+'" y="18" text-anchor="middle">'+chartTitle+'</text>');
@@ -1042,7 +1046,7 @@ function drawLineChart(svgEl,points,xLabel,chartTitle){
   parts.push('<line class="axis-line" x1="'+padL+'" y1="'+padT+'" x2="'+padL+'" y2="'+(H-padB)+'"/>');
   parts.push('<path class="curve" d="'+d+'"/>');
   parts.push('<text class="axis-label" x="'+(W/2)+'" y="'+(H-14)+'" text-anchor="middle" font-size="11">'+xLabel+'</text>');
-  parts.push('<text class="axis-label" x="12" y="'+(padT+ih/2)+'" font-size="10" transform="rotate(-90 12 '+(padT+ih/2)+')">Net tax (S$)</text>');
+  parts.push('<text class="axis-label" x="10" y="'+(padT+ih/2)+'" font-size="10" transform="rotate(-90 10 '+(padT+ih/2)+')">'+yAxisLabel+'</text>');
   for(let k=0;k<=4;k++){const tx=xMin+k/4*(xMax-xMin),px=sx(tx);parts.push('<text class="axis-label" x="'+px.toFixed(1)+'" y="'+(H-padB+20)+'" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace">'+(tx>=1000?(tx/1000).toFixed(1)+'k':fmt(tx))+'</text>');}
   svgEl.innerHTML=parts.join('');
 }
@@ -1064,23 +1068,28 @@ function renderSimulatorCharts(resYou){
   for(let i=0;i<=steps;i++){
     const delta=maxDelta*i/steps;
     const a=allocateExtraVoluntary(delta,srs0,t0,f0,srsCap,TAX_CONFIG.cpfTopUp.self,TAX_CONFIG.cpfTopUp.family);
-    ptsVol.push({x:delta,y:computePersonFromFormOverrides({srs:a.srs,topSelf:a.topSelf,topFam:a.topFam}).netTax});
+    const nt=computePersonFromFormOverrides({srs:a.srs,topSelf:a.topSelf,topFam:a.topFam}).netTax;
+    ptsVol.push({x:nt,y:delta});
   }
   if(maxDelta>50){
     wrV.classList.remove('hidden');noteV.classList.remove('hidden');legV.classList.remove('hidden');
-    drawLineChart(el('chartVoluntary'),ptsVol,'Additional SRS + CPF voluntary reliefs (S$) — beyond what you entered','Estimated net tax vs extra voluntary reliefs');
-    noteV.textContent='Horizontal axis: total extra relief from SRS and CPF cash top-ups (SRS filled first, then self top-up, then family), up to annual caps. Vertical axis: estimated net tax after PTR/rebate. Steeper drops mean higher marginal tax savings.';
-    legV.innerHTML='<span><i class="sim-dot" style="background:var(--color-accent-primary)"></i> Marginal effect within $80k relief cap</span>';
+    drawLineChart(el('chartVoluntary'),ptsVol,'Estimated net tax payable (S$)','SRS + CPF top-ups vs tax','Additional SRS + CPF voluntary top-up (S$)');
+    noteV.textContent='Horizontal axis (X): estimated net tax payable after PTR/rebate. Vertical axis (Y): extra SRS + CPF cash top-up combined (SRS first, then self up to $8k, then family up to $8k), on top of what you entered. Each point links a tax outcome to the total top-up that achieves it (within annual caps and the $80k relief cap).';
+    legV.innerHTML='<span><i class="sim-dot" style="background:var(--color-accent-primary)"></i> Correlation: net tax ↔ voluntary top-up</span>';
   }else{
     wrV.classList.add('hidden');noteV.classList.remove('hidden');noteV.textContent='You are already at or near the maximum SRS and CPF top-up amounts (or have no room left under the $80k cap) — the voluntary relief curve has little room to move.';
   }
   const don0=Number(el('donations').value)||0,maxDon=Math.min(30000,Math.max(5000,inc*0.25));
   const donPts=[];
-  for(let i=0;i<=steps;i++){const ex=maxDon*i/steps;donPts.push({x:ex,y:computePersonFromFormOverrides({donations:don0+ex}).netTax});}
+  for(let i=0;i<=steps;i++){
+    const ex=maxDon*i/steps;
+    const nt=computePersonFromFormOverrides({donations:don0+ex}).netTax;
+    donPts.push({x:nt,y:ex});
+  }
   wrD.classList.remove('hidden');noteD.classList.remove('hidden');legD.classList.remove('hidden');
-  drawLineChart(el('chartDonation'),donPts,'Additional cash donations to IPCs (S$) — on top of what you entered','Estimated net tax vs extra donations');
-  noteD.textContent='Donations get a 250% tax deduction (separate from the $80k relief cap). Axis shows extra donation cash beyond your Reliefs-step entry.';
-  legD.innerHTML='<span><i class="sim-dot" style="background:var(--color-accent-primary)"></i> 250% deduction on qualifying IPC donations</span>';
+  drawLineChart(el('chartDonation'),donPts,'Estimated net tax payable (S$)','IPC donations vs tax','Additional cash donation to IPCs (S$)');
+  noteD.textContent='Horizontal axis (X): estimated net tax payable. Vertical axis (Y): extra cash donation to approved IPCs (on top of your Reliefs-step entry). 250% tax deduction — separate from the $80k relief cap.';
+  legD.innerHTML='<span><i class="sim-dot" style="background:var(--color-accent-primary)"></i> Correlation: net tax ↔ donation amount</span>';
   try{track('simulator_render',{max_voluntary_delta:Math.round(maxDelta),hit_cap:resYou.hitReliefCap});}catch(e){}
 }
 
