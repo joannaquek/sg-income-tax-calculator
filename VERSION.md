@@ -70,7 +70,7 @@ Older versions live in `archive/`. Only the latest version stays in the main fol
   - **Deployment**: GitHub Pages ready with `index.html` entry point.
 
 ### v2.5 — IRAS Pre-Filled Statement PDF upload
-- **File**: `sg-income-tax-calculator-v2.5.html` / `index.html` *(current)*
+- **File**: `archive/sg-income-tax-calculator-v2.5.html`
 - **Date**: 3 May 2026
 - **Status**: Active (latest)
 - **Changes**:
@@ -83,6 +83,17 @@ Older versions live in `archive/`. Only the latest version stays in the main fol
   - **Privacy**: Prominent "processed locally, never uploaded" notice; PDF.js runs entirely in browser.
 
 ---
+
+### v2.6 — UX review fixes (PRIZM 76→ target 85+)
+- **File**: `sg-income-tax-calculator-v2.6.html` / `index.html` *(current)*
+- **Date**: 4 May 2026
+- **Status**: Active (latest)
+- **Changes** (addressing 7 of 8 PRIZM findings):
+  - **Upload zone redesign** (#1, #7): Horizontal card with teal left-border accent, "⚡ Fastest way — saves ~3 min" badge, privacy text now teal with ✓ icon, upload button elevated to primary teal.
+  - **Income formatting** (#2): `S$` prefix wrapper, live comma formatting as you type (85000 → 85,000), formatted hint below field, blur validation.
+  - **Age validation** (#4): `min=16 max=100` enforced, blur validation with inline error message.
+  - **Citizenship + tax resident grouped** (#6): Both fields wrapped in a visual residency group box with explanatory combined tooltip.
+  - **Mobile Continue button** (#8): Full-width on screens <560px, sticky footer with border separator.
 
 ## Planned
 
