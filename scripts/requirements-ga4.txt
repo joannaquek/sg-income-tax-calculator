@@ -1,0 +1,2 @@
+# Google Analytics Data API (GA4) — page view reports
+google-analytics-data>=0.18.0

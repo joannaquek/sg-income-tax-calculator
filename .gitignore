@@ -1,0 +1,3 @@
+scripts/.venv/
+**/service-account*.json
+**/*credentials*.json

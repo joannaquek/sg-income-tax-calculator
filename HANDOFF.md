@@ -1,5 +1,14 @@
 # SG Income Tax Calculator — Handoff Document
-*Last updated: 4 May 2026*
+*Last updated: 4 May 2026 (session close — family UX, GA4 API tooling, handoff refresh)*
+
+---
+
+## Recent changes (for next session)
+
+- **Family step (v2.7)**: Master checkbox **“I have a spouse or dependants to declare”** (off by default). When on, user picks **Spouse / marriage**, **Qualifying children**, and/or **Parents or grandparents** independently. Tax logic uses `effectiveMarried()`, `childrenForTax()`, `parentsForTax()` — see `syncFamilyUI()` in the HTML. PDF pre-fill enables opt-in + children layer when children are detected.
+- **Simulator charts**: Hover tooltips + **“Your inputs”** marker `(netTax, 0)` on voluntary + donation curves; `drawLineChart(..., opts)`.
+- **GA4**: Snippet uses Measurement ID **`G-ELPM2185P7`** (same as property’s web stream). If Realtime is empty, usual causes are **ad blockers**, **wrong GA4 property selected in UI**, or **stream/property mismatch** — not a different “manual” install. **Data API** uses numeric **Property ID** `535765444` (`properties/535765444`), not `G-…`.
+- **Repo tooling**: `scripts/ga4_page_views.py` + `scripts/README_GA4_DATA_API.md` — pulls `screenPageViews` by `pagePath` via `runReport` (needs GCP service account + GA4 property Viewer). `.gitignore` ignores `scripts/.venv/` and `*credentials*.json`.
 
 ---
 
@@ -40,8 +49,10 @@ A self-contained single-file HTML tax calculator for Singapore YA 2026 (income e
 | Mobile sticky Continue button | ✅ Done | Full-width on <560px |
 | Homepage intro (what the app does) | ✅ Done | v2.7 |
 | Responsive layout pass | ✅ Done | Wider max-width on desktop; horizontal scroll stepper on phone; header stacks on small screens |
-| Top-up simulator (line charts) | ✅ Done | Results: extra SRS+CPF voluntary vs net tax; extra IPC donations vs net tax; $80k cap callout |
-| GA4 analytics | ✅ Done | Measurement ID: G-ELPM2185P7 |
+| Top-up simulator (line charts) | ✅ Done | Results: extra SRS+CPF voluntary vs net tax; extra IPC donations vs net tax; $80k cap callout; hover tooltips + current-scenario marker |
+| Family step progressive disclosure | ✅ Done | Opt-in + layers (spouse / children / parents); sharing UI split QCR/PTR vs parent % |
+| GA4 analytics | ✅ Done | Measurement ID: G-ELPM2185P7 (gtag.js in `<head>`) |
+| GA4 Data API script (local) | ✅ Done | `scripts/ga4_page_views.py` — optional; not part of deployed site |
 | Microsoft Clarity | ✅ Done | Project ID: wl75letgzu |
 | GitHub Pages deployment | ✅ Done | Auto-deploys on push |
 | Vercel deployment | ✅ Done | Auto-deploys on push, ~30s |
@@ -54,11 +65,16 @@ A self-contained single-file HTML tax calculator for Singapore YA 2026 (income e
 SingaporeIncomeTax/
 ├── index.html                          ← live file (copy of latest version)
 ├── sg-income-tax-calculator-v2.7.html  ← current version source
+├── .gitignore                          ← venv + credential JSON patterns
 ├── DEVICE_TEST_CHECKLIST.md           ← viewport QA checklist
 ├── VERSION.md                          ← version history + changelog
 ├── ANALYTICS.md                        ← GA4/Clarity setup + KPI guide
 ├── PHASE2_SINGPASS.md                  ← spec for future Singpass integration
 ├── HANDOFF.md                          ← this file
+├── scripts/
+│   ├── ga4_page_views.py               ← GA4 Data API: page views (runReport)
+│   ├── requirements-ga4.txt
+│   └── README_GA4_DATA_API.md         ← API enable, service account, curl example
 ├── archive/
 │   ├── sg-income-tax-calculator-ya2026.html  (v1.0)
 │   ├── sg-income-tax-calculator-v2.html      (v2.2)
@@ -91,7 +107,8 @@ SingaporeIncomeTax/
 
 ### Key GA4 Events Tracked
 - `step_view` — step_number (0–3), step_name → use for funnel drop-off
-- `calculate_tax` — income_bracket, net_tax, married, children_count, relief_cap_hit, donations
+- `calculate_tax` — income_bracket, net_tax, married, **family_opt_in**, children_count, relief_cap_hit, donations
+- `family_opt_in`, `family_layer_toggle` — family step disclosure
 - `pdf_prefill` — fields_extracted, income_found, children_found
 - `copy_summary` — proxy for "found it useful enough to share"
 - `theme_toggle`, `married_toggle`, `add_child`, `add_parent`
