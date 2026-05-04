@@ -72,7 +72,7 @@ Older versions live in `archive/`. Only the latest version stays in the main fol
 ### v2.5 — IRAS Pre-Filled Statement PDF upload
 - **File**: `archive/sg-income-tax-calculator-v2.5.html`
 - **Date**: 3 May 2026
-- **Status**: Active (latest)
+- **Status**: Archived
 - **Changes**:
   - **PDF upload zone**: Drag-and-drop or click-to-upload before the stepper. Processes 100% client-side via PDF.js (lazily loaded, only when user triggers upload).
   - **Document mockup tooltip**: Visual mini-replica of the IRAS Pre-Filled Income and Deduction Statement with redacted fields, plus step-by-step instructions to find it on myTax Portal.
@@ -84,16 +84,25 @@ Older versions live in `archive/`. Only the latest version stays in the main fol
 
 ---
 
-### v2.6 — UX review fixes (PRIZM 76→ target 85+)
-- **File**: `sg-income-tax-calculator-v2.6.html` / `index.html` *(current)*
+### v2.6 — UX review fixes (PRIZM)
+- **File**: `archive/sg-income-tax-calculator-v2.6.html`
 - **Date**: 4 May 2026
-- **Status**: Active (latest)
+- **Status**: Archived
 - **Changes** (addressing 7 of 8 PRIZM findings):
   - **Upload zone redesign** (#1, #7): Horizontal card with teal left-border accent, "⚡ Fastest way — saves ~3 min" badge, privacy text now teal with ✓ icon, upload button elevated to primary teal.
   - **Income formatting** (#2): `S$` prefix wrapper, live comma formatting as you type (85000 → 85,000), formatted hint below field, blur validation.
   - **Age validation** (#4): `min=16 max=100` enforced, blur validation with inline error message.
   - **Citizenship + tax resident grouped** (#6): Both fields wrapped in a visual residency group box with explanatory combined tooltip.
   - **Mobile Continue button** (#8): Full-width on screens <560px, sticky footer with border separator.
+
+### v2.7 — Intro copy, responsive layout, top-up simulator charts
+- **File**: `sg-income-tax-calculator-v2.7.html` / `index.html` *(current)*
+- **Date**: 4 May 2026
+- **Status**: Active (latest)
+- **Changes**:
+  - **Homepage intro**: Short description of what the calculator does, year-end / planning angle, link to IRAS.
+  - **Responsive layout**: Wider `max-width` on large screens; stepper horizontal scroll on narrow phones; header stacks on small viewports; touch-friendly step buttons.
+  - **Top-up simulator** (Results): Two SVG line charts — (1) extra SRS + CPF voluntary reliefs vs estimated net tax (allocates extra across SRS → self top-up → family top-up up to caps); (2) extra IPC donation cash vs net tax (250% deduction, outside $80k cap). Includes IRAS cap reminder callout. Hidden for non-residents / zero income. GA4 event `simulator_render`.
 
 ## Planned
 
@@ -112,7 +121,9 @@ Older versions live in `archive/`. Only the latest version stays in the main fol
 | `archive/sg-income-tax-calculator-v2.html` | v2.2 | Archived |
 | `archive/sg-income-tax-calculator-v2.3.html` | v2.3 | Archived |
 | `archive/sg-income-tax-calculator-v2.4.html` | v2.4 | Archived |
-| `sg-income-tax-calculator-v2.5.html` / `index.html` | v2.5 | Active (latest) |
+| `archive/sg-income-tax-calculator-v2.5.html` | v2.5 | Archived |
+| `archive/sg-income-tax-calculator-v2.6.html` | v2.6 | Archived |
+| `sg-income-tax-calculator-v2.7.html` / `index.html` | v2.7 | Active (latest) |
 | `PHASE2_SINGPASS.md` | — | Spec for v3.0 |
 | `VERSION.md` | — | This file |
 | `.design/sg-tax-calculator/` | — | Design artifacts (brief, IA, tokens, tasks, review) |

@@ -32,6 +32,8 @@ All events are fired via a `track(event, params)` wrapper in the JS (calls `gtag
 | `add_child` | User adds a child row | `count` (cumulative child count) |
 | `add_parent` | User adds a parent/dependant row | — |
 | `copy_summary` | Copy summary button clicked | — |
+| `pdf_prefill` | IRAS Pre-Filled PDF parsed successfully | `income_found`, `children_found`, `has_wmcr`, `ya` |
+| `simulator_render` | Results charts drawn (tax resident + income &gt; 0) | `max_voluntary_delta`, `hit_cap` |
 
 ### `income_bracket` values
 | Value | Range |

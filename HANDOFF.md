@@ -12,7 +12,7 @@ A self-contained single-file HTML tax calculator for Singapore YA 2026 (income e
 - **Backup**: https://joannaquek.github.io/sg-income-tax-calculator/
 - **Repo**: https://github.com/joannaquek/sg-income-tax-calculator
 
-### Current Version: v2.6
+### Current Version: v2.7
 
 ---
 
@@ -38,6 +38,9 @@ A self-contained single-file HTML tax calculator for Singapore YA 2026 (income e
 | Age validation (16–100 bounds) | ✅ Done | Inline error message |
 | Citizenship + tax residency grouped | ✅ Done | Visual group with joint tooltip |
 | Mobile sticky Continue button | ✅ Done | Full-width on <560px |
+| Homepage intro (what the app does) | ✅ Done | v2.7 |
+| Responsive layout pass | ✅ Done | Wider max-width on desktop; horizontal scroll stepper on phone; header stacks on small screens |
+| Top-up simulator (line charts) | ✅ Done | Results: extra SRS+CPF voluntary vs net tax; extra IPC donations vs net tax; $80k cap callout |
 | GA4 analytics | ✅ Done | Measurement ID: G-ELPM2185P7 |
 | Microsoft Clarity | ✅ Done | Project ID: wl75letgzu |
 | GitHub Pages deployment | ✅ Done | Auto-deploys on push |
@@ -50,7 +53,8 @@ A self-contained single-file HTML tax calculator for Singapore YA 2026 (income e
 ```
 SingaporeIncomeTax/
 ├── index.html                          ← live file (copy of latest version)
-├── sg-income-tax-calculator-v2.6.html  ← current version source
+├── sg-income-tax-calculator-v2.7.html  ← current version source
+├── DEVICE_TEST_CHECKLIST.md           ← viewport QA checklist
 ├── VERSION.md                          ← version history + changelog
 ├── ANALYTICS.md                        ← GA4/Clarity setup + KPI guide
 ├── PHASE2_SINGPASS.md                  ← spec for future Singpass integration
