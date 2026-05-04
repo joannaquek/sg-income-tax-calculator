@@ -343,8 +343,8 @@ input.invalid{border-color:var(--color-status-error)!important;}
 .tax-simulator{margin-top:var(--space-7)}
 .tax-simulator-head{margin-bottom:var(--space-5)}
 .tax-simulator-head h3{margin-bottom:var(--space-3)}
-.sim-chart-wrap{background:var(--color-bg-tertiary);border:1px solid var(--color-border-secondary);border-radius:var(--radius-md);padding:var(--space-5);overflow-x:auto}
-.sim-chart-wrap svg{display:block;max-width:100%;height:auto;min-width:280px;color:var(--color-text-secondary)}
+.sim-chart-wrap{position:relative;background:var(--color-bg-tertiary);border:1px solid var(--color-border-secondary);border-radius:var(--radius-md);padding:var(--space-5);overflow-x:auto}
+.sim-chart-wrap svg{display:block;max-width:100%;height:auto;min-width:280px;color:var(--color-text-secondary);cursor:crosshair}
 .sim-chart-wrap svg .chart-title{font-size:11px;font-weight:600;fill:currentColor}
 .sim-chart-wrap svg .axis-label{font-size:10px;fill:var(--color-text-tertiary)}
 .sim-chart-wrap svg .grid-line{stroke:var(--color-border-secondary);stroke-opacity:.45;stroke-width:1}
@@ -355,6 +355,14 @@ input.invalid{border-color:var(--color-status-error)!important;}
 .sim-legend span{display:inline-flex;align-items:center;gap:var(--space-2)}
 .sim-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 .sim-cap-callout{font-size:var(--fs-xs);color:var(--color-text-secondary);margin-top:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-bg-secondary);border-radius:var(--radius-sm);border-left:3px solid var(--color-accent-primary)}
+.sim-tooltip{position:absolute;z-index:6;pointer-events:none;background:var(--color-bg-secondary);border:1px solid var(--color-border-primary);border-radius:var(--radius-md);padding:var(--space-3) var(--space-5);font-size:var(--fs-xs);line-height:var(--lh-relaxed);color:var(--color-text-primary);box-shadow:var(--shadow-md);max-width:240px;visibility:hidden;opacity:0;transition:opacity var(--dur-fast) var(--ease)}
+.sim-tooltip.visible{visibility:visible;opacity:1}
+.sim-tooltip strong{display:block;margin-bottom:var(--space-2);color:var(--color-accent-primary);font-size:var(--fs-xs)}
+.sim-pt-hit{fill:transparent;stroke:transparent;cursor:crosshair}
+.sim-current-dot{fill:var(--color-accent-primary);stroke:var(--color-bg-secondary);stroke-width:2;pointer-events:none}
+.sim-current-ring{fill:none;stroke:var(--color-accent-primary);stroke-width:2;stroke-dasharray:4 3;opacity:.75;pointer-events:none}
+.sim-current-label{font-size:9px;font-weight:600;fill:var(--color-accent-primary);pointer-events:none}
+.sim-current-sub{font-size:8px;fill:var(--color-text-tertiary);pointer-events:none}
 
 @media print{
   .progress,.nav-bar,.intro-hero,.tax-simulator,.theme-switch,.btn-copy,.btn-add,.collapsible-trigger,footer,details{display:none!important}
@@ -639,11 +647,13 @@ input.invalid{border-color:var(--color-status-error)!important;}
       </div>
       <div id="simChartVoluntaryWrap" class="sim-chart-wrap hidden">
         <svg id="chartVoluntary" width="600" height="260" viewBox="0 0 600 260" aria-label="Net tax payable on horizontal axis, voluntary SRS and CPF top-up amount on vertical axis"></svg>
+        <div id="tipVoluntary" class="sim-tooltip" role="tooltip" aria-hidden="true"></div>
       </div>
       <p id="simChartVoluntaryNote" class="sim-chart-note hidden"></p>
       <div id="simLegendVoluntary" class="sim-legend hidden"></div>
       <div id="simChartDonWrap" class="sim-chart-wrap hidden" style="margin-top:var(--space-6)">
         <svg id="chartDonation" width="600" height="220" viewBox="0 0 600 220" aria-label="Net tax payable on horizontal axis, additional IPC donation on vertical axis"></svg>
+        <div id="tipDonation" class="sim-tooltip" role="tooltip" aria-hidden="true"></div>
       </div>
       <p id="simChartDonNote" class="sim-chart-note hidden"></p>
       <div id="simLegendDon" class="sim-legend hidden"></div>
@@ -1023,7 +1033,40 @@ function allocateExtraVoluntary(delta,srs0,t0,f0,srsCap,selfCap,famCap){
   const addF=Math.min(rem,Math.max(0,famCap-f));f+=addF;
   return{srs:s,topSelf:t,topFam:f};
 }
-function drawLineChart(svgEl,points,xLabel,chartTitle,yAxisLabel){
+const SVG_NS='http://www.w3.org/2000/svg';
+function clientToSvg(svg,clientX,clientY){const p=svg.createSVGPoint();p.x=clientX;p.y=clientY;const m=svg.getScreenCTM();if(!m)return{x:0,y:0};return p.matrixTransform(m.inverse());}
+function bindChartHover(svgEl,tooltipEl,sorted,sx,sy,yLineLabel){
+  if(svgEl._chartHoverClean){svgEl._chartHoverClean();}
+  const fmtM=v=>'S$'+fmt(v);
+  const thresh=38*38;
+  const show=(clientX,clientY)=>{
+    const t=clientToSvg(svgEl,clientX,clientY);
+    let best=null,bd=1e18;
+    sorted.forEach(p=>{const cx=sx(p.x),cy=sy(p.y);const d=(t.x-cx)**2+(t.y-cy)**2;if(d<bd){bd=d;best=p;}});
+    const wrap=tooltipEl.parentElement;
+    const br=wrap.getBoundingClientRect();
+    if(bd<thresh&&best){
+      tooltipEl.innerHTML='<strong>Scenario point</strong><br>Net tax: '+fmtM(best.x)+'<br>'+yLineLabel+': '+fmtM(best.y);
+      tooltipEl.classList.add('visible');tooltipEl.setAttribute('aria-hidden','false');
+      let lx=clientX-br.left+12,ty=clientY-br.top+12;
+      if(lx>br.width-250)lx=clientX-br.left-250;if(lx<8)lx=8;if(ty>br.height-70)ty=clientY-br.top-70;if(ty<8)ty=8;
+      tooltipEl.style.left=lx+'px';tooltipEl.style.top=ty+'px';
+    }else{
+      tooltipEl.classList.remove('visible');tooltipEl.setAttribute('aria-hidden','true');
+    }
+  };
+  const mv=e=>show(e.clientX,e.clientY);
+  const tv=e=>{if(e.touches&&e.touches[0])show(e.touches[0].clientX,e.touches[0].clientY);};
+  const leave=()=>{tooltipEl.classList.remove('visible');tooltipEl.setAttribute('aria-hidden','true');};
+  svgEl.addEventListener('mousemove',mv);
+  svgEl.addEventListener('mouseleave',leave);
+  svgEl.addEventListener('touchmove',tv,{passive:true});
+  svgEl.addEventListener('touchend',leave,{passive:true});
+  svgEl._chartHoverClean=()=>{svgEl.removeEventListener('mousemove',mv);svgEl.removeEventListener('mouseleave',leave);svgEl.removeEventListener('touchmove',tv);svgEl.removeEventListener('touchend',leave);};
+}
+function drawLineChart(svgEl,points,xLabel,chartTitle,yAxisLabel,opts){
+  opts=opts||{};
+  const tooltipEl=opts.tooltipEl,yLineLabel=opts.yValueLabel||'Top-up',currentMarker=opts.currentMarker;
   const W=+svgEl.getAttribute('width')||600,H=+svgEl.getAttribute('height')||260,padL=62,padR=20,padT=30,padB=54,iw=W-padL-padR,ih=H-padT-padB;
   if(!points.length)return;
   yAxisLabel=yAxisLabel||'Top-up (S$)';
@@ -1032,7 +1075,7 @@ function drawLineChart(svgEl,points,xLabel,chartTitle,yAxisLabel){
   const xPad=Math.max((xHi-xLo)*0.03,100);
   const xMin=Math.max(0,xLo-xPad),xMax=xHi+xPad;
   const yLo=Math.min(...ys),yHi=Math.max(...ys);
-  const yPad=Math.max((yHi-yLo)*0.08, yHi*0.05, 200);
+  const yPad=Math.max((yHi-yLo)*0.08,yHi*0.05,200);
   const yMin=Math.max(0,yLo-yPad*0.02),yMax=yHi+yPad;
   const sx=x=>padL+(xMax>xMin?(x-xMin)/(xMax-xMin):0)*iw;
   const sy=y=>padT+ih-(yMax>yMin?(y-yMin)/(yMax-yMin):0.5)*ih;
@@ -1049,11 +1092,36 @@ function drawLineChart(svgEl,points,xLabel,chartTitle,yAxisLabel){
   parts.push('<text class="axis-label" x="10" y="'+(padT+ih/2)+'" font-size="10" transform="rotate(-90 10 '+(padT+ih/2)+')">'+yAxisLabel+'</text>');
   for(let k=0;k<=4;k++){const tx=xMin+k/4*(xMax-xMin),px=sx(tx);parts.push('<text class="axis-label" x="'+px.toFixed(1)+'" y="'+(H-padB+20)+'" text-anchor="middle" font-size="9" font-family="JetBrains Mono,monospace">'+(tx>=1000?(tx/1000).toFixed(1)+'k':fmt(tx))+'</text>');}
   svgEl.innerHTML=parts.join('');
+  const hitG=document.createElementNS(SVG_NS,'g');
+  hitG.setAttribute('class','sim-hit-layer');
+  sorted.forEach(p=>{const c=document.createElementNS(SVG_NS,'circle');c.setAttribute('cx',sx(p.x).toFixed(2));c.setAttribute('cy',sy(p.y).toFixed(2));c.setAttribute('r','16');c.setAttribute('class','sim-pt-hit');hitG.appendChild(c);});
+  svgEl.appendChild(hitG);
+  if(currentMarker&&typeof currentMarker.x==='number'&&typeof currentMarker.y==='number'){
+    const cx=sx(currentMarker.x),cy=sy(currentMarker.y);
+    const gCur=document.createElementNS(SVG_NS,'g');
+    gCur.setAttribute('class','sim-current-marker-group');
+    const ring=document.createElementNS(SVG_NS,'circle');
+    ring.setAttribute('class','sim-current-ring');ring.setAttribute('cx',cx.toFixed(2));ring.setAttribute('cy',cy.toFixed(2));ring.setAttribute('r','16');
+    const dot=document.createElementNS(SVG_NS,'circle');
+    dot.setAttribute('class','sim-current-dot');dot.setAttribute('cx',cx.toFixed(2));dot.setAttribute('cy',cy.toFixed(2));dot.setAttribute('r','6');
+    let ly=cy-20;if(ly<padT+10)ly=cy+34;
+    const lbl=document.createElementNS(SVG_NS,'text');
+    lbl.setAttribute('class','sim-current-label');lbl.setAttribute('x',cx.toFixed(2));lbl.setAttribute('y',ly.toFixed(2));lbl.setAttribute('text-anchor','middle');
+    lbl.textContent='Your inputs';
+    const sub=document.createElementNS(SVG_NS,'text');
+    sub.setAttribute('class','sim-current-sub');sub.setAttribute('x',cx.toFixed(2));sub.setAttribute('y',(ly+13).toFixed(2));sub.setAttribute('text-anchor','middle');
+    sub.textContent='Net tax '+fmtAxis(currentMarker.x);
+    gCur.appendChild(ring);gCur.appendChild(dot);gCur.appendChild(lbl);gCur.appendChild(sub);
+    svgEl.appendChild(gCur);
+  }
+  if(tooltipEl)bindChartHover(svgEl,tooltipEl,sorted,sx,sy,yLineLabel);
 }
 function renderSimulatorCharts(resYou){
   const sim=el('taxSimulator'),taxRes=el('taxResident').checked,inc=readIncome();
   sim.classList.remove('hidden');
+  [el('chartVoluntary'),el('chartDonation')].forEach(s=>{if(s._chartHoverClean){s._chartHoverClean();delete s._chartHoverClean;}});
   const wrV=el('simChartVoluntaryWrap'),wrD=el('simChartDonWrap'),noteV=el('simChartVoluntaryNote'),noteD=el('simChartDonNote'),legV=el('simLegendVoluntary'),legD=el('simLegendDon');
+  el('tipVoluntary').classList.remove('visible');el('tipDonation').classList.remove('visible');
   el('simNonRes').classList.toggle('hidden',taxRes);
   if(!taxRes||inc<=0){
     wrV.classList.add('hidden');wrD.classList.add('hidden');noteV.classList.add('hidden');noteD.classList.add('hidden');legV.classList.add('hidden');legD.classList.add('hidden');
@@ -1073,8 +1141,8 @@ function renderSimulatorCharts(resYou){
   }
   if(maxDelta>50){
     wrV.classList.remove('hidden');noteV.classList.remove('hidden');legV.classList.remove('hidden');
-    drawLineChart(el('chartVoluntary'),ptsVol,'Estimated net tax payable (S$)','SRS + CPF top-ups vs tax','Additional SRS + CPF voluntary top-up (S$)');
-    noteV.textContent='Horizontal axis (X): estimated net tax payable after PTR/rebate. Vertical axis (Y): extra SRS + CPF cash top-up combined (SRS first, then self up to $8k, then family up to $8k), on top of what you entered. Each point links a tax outcome to the total top-up that achieves it (within annual caps and the $80k relief cap).';
+    drawLineChart(el('chartVoluntary'),ptsVol,'Estimated net tax payable (S$)','SRS + CPF top-ups vs tax','Additional SRS + CPF voluntary top-up (S$)',{currentMarker:{x:resYou.netTax,y:0},tooltipEl:el('tipVoluntary'),yValueLabel:'Extra voluntary (SRS+CPF)'});
+    noteV.textContent='Hover or drag on the chart to see each scenario. The marked point is your current form entries (no extra top-up on this axis). Horizontal axis: net tax. Vertical axis: additional voluntary top-up.';
     legV.innerHTML='<span><i class="sim-dot" style="background:var(--color-accent-primary)"></i> Correlation: net tax ↔ voluntary top-up</span>';
   }else{
     wrV.classList.add('hidden');noteV.classList.remove('hidden');noteV.textContent='You are already at or near the maximum SRS and CPF top-up amounts (or have no room left under the $80k cap) — the voluntary relief curve has little room to move.';
@@ -1087,8 +1155,8 @@ function renderSimulatorCharts(resYou){
     donPts.push({x:nt,y:ex});
   }
   wrD.classList.remove('hidden');noteD.classList.remove('hidden');legD.classList.remove('hidden');
-  drawLineChart(el('chartDonation'),donPts,'Estimated net tax payable (S$)','IPC donations vs tax','Additional cash donation to IPCs (S$)');
-  noteD.textContent='Horizontal axis (X): estimated net tax payable. Vertical axis (Y): extra cash donation to approved IPCs (on top of your Reliefs-step entry). 250% tax deduction — separate from the $80k relief cap.';
+  drawLineChart(el('chartDonation'),donPts,'Estimated net tax payable (S$)','IPC donations vs tax','Additional cash donation to IPCs (S$)',{currentMarker:{x:resYou.netTax,y:0},tooltipEl:el('tipDonation'),yValueLabel:'Extra donation (cash)'});
+  noteD.textContent='Hover near the line for values. Marked point = your entries (extra donation on vertical axis starts at $0). 250% IPC deduction — outside the $80k relief cap.';
   legD.innerHTML='<span><i class="sim-dot" style="background:var(--color-accent-primary)"></i> Correlation: net tax ↔ donation amount</span>';
   try{track('simulator_render',{max_voluntary_delta:Math.round(maxDelta),hit_cap:resYou.hitReliefCap});}catch(e){}
 }
