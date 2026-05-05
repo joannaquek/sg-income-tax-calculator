@@ -92,7 +92,7 @@ a:hover{text-decoration:underline}
    PROGRESS BAR
    ================================================================ */
 .progress{display:flex;gap:var(--space-2);margin-bottom:var(--space-7);position:sticky;top:0;z-index:50;background:var(--color-bg-primary);padding:var(--space-5) 0;transition:background var(--dur-normal) var(--ease);min-width:0}
-@media(max-width:579px){.progress{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:var(--space-3);scrollbar-width:thin}.progress::-webkit-scrollbar{height:4px}.prog-step{flex:0 0 auto;min-width:108px}}
+@media(max-width:579px){.progress{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:var(--space-3);scrollbar-width:thin}.progress::-webkit-scrollbar{height:4px}.prog-step{flex:0 0 auto;min-width:118px}}
 .prog-step{flex:1;display:flex;align-items:center;gap:var(--space-3);cursor:pointer;padding:var(--space-4) var(--space-5);border-radius:var(--radius-md);border:1px solid var(--color-border-secondary);background:var(--color-bg-secondary);transition:all var(--dur-fast) var(--ease);font-size:var(--fs-sm);color:var(--color-text-tertiary)}
 .prog-step:hover{border-color:var(--color-border-primary)}
 .prog-step .num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:var(--fs-xs);font-weight:var(--fw-semi);background:var(--color-bg-tertiary);border:1px solid var(--color-border-primary);flex-shrink:0;transition:all var(--dur-fast) var(--ease)}
@@ -100,8 +100,8 @@ a:hover{text-decoration:underline}
 .prog-step.active .num{background:var(--color-accent-primary);color:#fff;border-color:var(--color-accent-primary)}
 .prog-step.done{border-color:var(--color-accent-primary);color:var(--color-accent-primary)}
 .prog-step.done .num{background:var(--color-accent-primary);color:#fff;border-color:var(--color-accent-primary)}
-.prog-step .lbl{display:none}
-@media(min-width:580px){.prog-step .lbl{display:inline}}
+.prog-step .lbl{line-height:1.25;text-align:left;font-weight:var(--fw-medium)}
+@media(max-width:579px){.prog-step{align-items:flex-start;padding:var(--space-3) var(--space-4);gap:var(--space-2)}.prog-step .lbl{font-size:11px;max-width:92px}}
 
 /* ================================================================
    CARD
