@@ -355,6 +355,15 @@ input.invalid{border-color:var(--color-status-error)!important;}
 .intro-hero p{font-size:var(--fs-sm);color:var(--color-text-secondary);line-height:var(--lh-relaxed);margin:0}
 .intro-hero p strong{color:var(--color-text-primary);font-weight:var(--fw-semi)}
 
+/* Blog / guides (placeholder until articles ship) */
+.blog-section{background:var(--color-bg-secondary);border:1px solid var(--color-border-secondary);border-radius:var(--radius-lg);padding:var(--space-6) var(--space-7);margin-bottom:var(--space-7);box-shadow:var(--shadow-sm)}
+.blog-section-heading{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--color-text-primary);margin:0 0 var(--space-3) 0;letter-spacing:var(--ls-tight);line-height:var(--lh-tight)}
+.blog-section-lead{font-size:var(--fs-sm);color:var(--color-text-secondary);line-height:var(--lh-relaxed);margin:0 0 var(--space-5) 0}
+.blog-section-lead strong{color:var(--color-text-primary);font-weight:var(--fw-semi)}
+.blog-topics-note{font-size:var(--fs-xs);font-weight:var(--fw-semi);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:var(--ls-wide);margin:0 0 var(--space-3) 0}
+.blog-topics{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:var(--space-3)}
+.blog-topic-chip{display:inline-block;font-size:var(--fs-xs);color:var(--color-text-secondary);background:var(--color-bg-tertiary);border:1px solid var(--color-border-secondary);border-radius:var(--radius-full);padding:var(--space-2) var(--space-4)}
+
 /* Tax simulator chart */
 .tax-simulator{margin-top:var(--space-7)}
 .tax-simulator-head{margin-bottom:var(--space-5)}
@@ -381,7 +390,7 @@ input.invalid{border-color:var(--color-status-error)!important;}
 .sim-current-sub{font-size:8px;fill:var(--color-text-tertiary);pointer-events:none}
 
 @media print{
-  .progress,.nav-bar,.intro-hero,.tax-simulator,.theme-switch,.btn-copy,.btn-add,.collapsible-trigger,footer,details{display:none!important}
+  .progress,.nav-bar,.intro-hero,.blog-section,.tax-simulator,.theme-switch,.btn-copy,.btn-add,.collapsible-trigger,footer,details{display:none!important}
   body{background:#fff;color:#000;font-size:11pt}
   .card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
   .step-panel{display:block!important}
@@ -409,6 +418,17 @@ input.invalid{border-color:var(--color-status-error)!important;}
   <div class="intro-hero" role="region" aria-label="About this calculator">
     <p><strong>Estimate your Singapore income tax</strong> for Year of Assessment 2026 (salary and bonuses earned in 2025). Enter your details step by step, or upload your IRAS Pre-Filled statement to auto-fill. See <strong>reliefs, rebates, and the $80,000 relief cap</strong> — then use the <strong>top-up simulator</strong> on the results page to see how extra SRS, CPF cash top-ups, and donations change your tax. Use this to plan year-end contributions before 31 Dec. Always verify with <a href="https://www.iras.gov.sg" target="_blank" rel="noopener">IRAS</a>.</p>
   </div>
+
+  <section class="blog-section" id="guides" aria-labelledby="blog-heading">
+    <h2 id="blog-heading" class="blog-section-heading">Guides &amp; explainers</h2>
+    <p class="blog-section-lead"><strong>Educational articles</strong> to sit alongside this calculator — how Singapore income tax works for YA 2026, tax residency, SRS and relief ideas, and related topics for learning and search. <strong>Coming soon:</strong> first posts are not published yet; use the calculator below in the meantime.</p>
+    <p class="blog-topics-note" id="blog-topics-label">Planned topics</p>
+    <ul class="blog-topics" aria-labelledby="blog-topics-label">
+      <li><span class="blog-topic-chip">YA 2026 tax resident</span></li>
+      <li><span class="blog-topic-chip">SRS tax savings Singapore</span></li>
+      <li><span class="blog-topic-chip">Personal reliefs &amp; $80k cap</span></li>
+    </ul>
+  </section>
 
   <!-- ============ PDF PRE-FILL ZONE ============ -->
   <div class="upload-zone" id="uploadZone">
